@@ -1,0 +1,3 @@
+@extends('pages.master')
+
+hi
