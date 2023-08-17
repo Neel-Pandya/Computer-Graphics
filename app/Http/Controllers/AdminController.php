@@ -173,4 +173,42 @@ class AdminController extends Controller
                 'password' => 'required'
             ]);
     }
+
+    public function coupen_available(){
+        return view('pages.coupen'); 
+    }
+    public function coupen_add(){
+        return view('pages.coupen_add'); 
+    }
+    public function coupen_used(){
+        return view('pages.coupen_store'); 
+    }
+    public function coupen_store(Request $request){
+            $request->validate([
+                    'coupen_name' => 'required', 
+                    'coupen_price' => 'required|numeric', 
+                    'coupen_expire_date' => 'required',
+                    'coupen_discount' => 'required'
+            ]);
+    }
+
+    public function coupen_edit(){
+        return view('pages.coupen_edit'); 
+    }
+
+    public function coupen_update(Request $request){
+        $request->validate([ 
+            'coupen_price' => 'required|numeric', 
+            'coupen_expire_date' => 'required',
+            'coupen_discount' => 'required'
+    ]);
+
+
+    }
+
+    public function coupen_use(){
+        return view('pages.coupen_used'); 
+    }
+
+    
 }

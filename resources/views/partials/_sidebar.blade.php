@@ -47,7 +47,7 @@
           <li class="nav-item"> <a class="nav-link" href="{{ route('category.jeans') }}">Jeans</a></li>
           <li class="nav-item"> <a class="nav-link" href="{{ route('category.shirt') }}">Shirt</a></li>
           <li class="nav-item"> <a class="nav-link" href="{{ route('category.hoodie') }}">Hoodie</a></li>
-          
+
           <li class="nav-item"><a href="{{ route('category.available') }}" class="nav-link">Product Category</a></li>
 
 
@@ -64,7 +64,7 @@
       <div class="collapse" id="tables">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item"> <a class="nav-link " href="{{ route('customers.details') }}">Customers Detail</a></li>
-          
+
         </ul>
       </div>
     </li>
@@ -78,11 +78,18 @@
     </li>
 
 
-
-
-
-
-
-
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#mycoupen" aria-expanded="false" aria-controls="mycoupen">
+        <i class="icon-layout menu-icon"></i>
+        <span class="menu-title">Coupens</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="mycoupen">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="{{ route('coupen.add') }}">Coupens</a></li>
+          <li class="nav-item"><a href="{{ route('coupen.use') }}" class="nav-link">Used Coupen</a></li>
+        </ul>
+      </div>
+    </li>
   </ul>
 </nav>
