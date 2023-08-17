@@ -8,7 +8,7 @@ Coupens
 
 @section('content')
 <table class="table  table-striped  table-bordered">
-    <caption class="mt-4"><a href="{{ route('coupen.used') }}"><button class="btn btn-info">Add product</button></a>
+    <caption class="mt-4"><a href="{{ route('coupen.used') }}"><button class="btn btn-info">Add coupen</button></a>
     </caption>
     <thead class="table-dark text-center ">
         <th>Id</th>
