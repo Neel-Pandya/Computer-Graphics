@@ -163,52 +163,86 @@ class AdminController extends Controller
     {
         return view('pages.products_male');
     }
-    public function rate(){
-        return view('pages.rating'); 
+    public function rate()
+    {
+        return view('pages.rating');
     }
 
-    public function login(Request $request){
-            $request->validate([
-                'email' => 'required|email', 
-                'password' => 'required'
-            ]);
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
     }
 
-    public function coupen_available(){
-        return view('pages.coupen'); 
+    public function coupen_available()
+    {
+        return view('pages.coupen');
     }
-    public function coupen_add(){
-        return view('pages.coupen_add'); 
+    public function coupen_add()
+    {
+        return view('pages.coupen_add');
     }
-    public function coupen_used(){
-        return view('pages.coupen_store'); 
+    public function coupen_used()
+    {
+        return view('pages.coupen_store');
     }
-    public function coupen_store(Request $request){
-            $request->validate([
-                    'coupen_name' => 'required', 
-                    'coupen_price' => 'required|numeric', 
-                    'coupen_expire_date' => 'required',
-                    'coupen_discount' => 'required'
-            ]);
-    }
-
-    public function coupen_edit(){
-        return view('pages.coupen_edit'); 
-    }
-
-    public function coupen_update(Request $request){
-        $request->validate([ 
-            'coupen_price' => 'required|numeric', 
+    public function coupen_store(Request $request)
+    {
+        $request->validate([
+            'coupen_name' => 'required',
+            'coupen_price' => 'required|numeric',
             'coupen_expire_date' => 'required',
             'coupen_discount' => 'required'
-    ]);
-
-
+        ]);
     }
 
-    public function coupen_use(){
-        return view('pages.coupen_used'); 
+    public function coupen_edit()
+    {
+        return view('pages.coupen_edit');
     }
 
-    
+    public function coupen_update(Request $request)
+    {
+        $request->validate([
+            'coupen_price' => 'required|numeric',
+            'coupen_expire_date' => 'required',
+            'coupen_discount' => 'required'
+        ]);
+    }
+
+    public function coupen_use()
+    {
+        return view('pages.coupen_used');
+    }
+
+    public function user_login()
+    {
+        return view('users.user_login');
+    }
+    public function user_store(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+    }
+    public function user_register()
+    {
+        return view('users.user_register');
+    }
+    public function user_register_validate(Request $request)
+    {
+        $request->validate([
+            'username' => 'required',
+            'email' => 'required|email',
+            'country' => 'required',
+            'pass' => 'required|confirmed',
+            'pass_confirmation' => 'required',
+            'gender' => 'required',
+            'profile' => 'required|mimes:png,jpg,jpeg'
+
+        ]);
+    }
 }
