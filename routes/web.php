@@ -21,6 +21,7 @@ Route::prefix('admin')->group(function () {
     Route::post('update_pass', [AdminController::class, 'update_password'])->name('admin.password');
     Route::post('update', [AdminController::class, 'admin_update'])->name('admin.update');
     Route::view('login', 'pages.admin_login');
+
     Route::prefix('products')->group(function () {
         Route::get('avialable_products', [AdminController::class, 'products'])->name('products.available');
         Route::get('edit_products', [AdminController::class, 'products_edit'])->name('products.edit');
@@ -29,6 +30,7 @@ Route::prefix('admin')->group(function () {
         Route::post('product_store', [AdminController::class, 'product_store'])->name('products.store');
         Route::get('purchased_products', [AdminController::class, 'products_purchase'])->name('products.purchase');
     });
+
     Route::prefix('category')->group(function () {
         Route::get('available_category', [AdminController::class, 'category_create'])->name('category.available');
         Route::get('category_add', [AdminController::class, 'category_add'])->name('category.add');
@@ -51,7 +53,6 @@ Route::prefix('admin')->group(function () {
 
     Route::prefix('gender')->group(function () {
         Route::get('male', [AdminController::class, 'products_male'])->name('gender.male');
-
         Route::get('female', [AdminController::class, 'products_female'])->name('gender.female');
     });
 
@@ -63,11 +64,9 @@ Route::prefix('admin')->group(function () {
         Route::get('used', [AdminController::class, 'coupen_used'])->name('coupen.used');
         Route::get('add', [AdminController::class, 'coupen_add'])->name('coupen.add');
         Route::get('edit', [AdminController::class, 'coupen_edit'])->name('coupen.edit');
-        Route::post('store', [AdminController::class, 'coupen_store'])->name('coupen.store'); 
-        Route::get('edit', [AdminController::class, 'coupen_edit'])->name('coupen.edit'); 
-        Route::post('update', [AdminController::class,'coupen_update'])->name('coupen.update');
-         Route::get('used_coupen', [AdminController::class, 'coupen_use'])->name('coupen.use'); 
+        Route::post('store', [AdminController::class, 'coupen_store'])->name('coupen.store');
+        Route::get('edit', [AdminController::class, 'coupen_edit'])->name('coupen.edit');
+        Route::post('update', [AdminController::class, 'coupen_update'])->name('coupen.update');
+        Route::get('used_coupen', [AdminController::class, 'coupen_use'])->name('coupen.use');
     });
-
-    
 });
