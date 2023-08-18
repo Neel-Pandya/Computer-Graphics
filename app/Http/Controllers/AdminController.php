@@ -245,4 +245,8 @@ class AdminController extends Controller
 
         ]);
     }
+
+    public function guest_create(){
+        return view('guest.index'); 
+    }
 }
