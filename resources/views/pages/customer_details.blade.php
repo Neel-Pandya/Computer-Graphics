@@ -7,7 +7,7 @@ Customers Details
 <div class="table-responsive">
     <table class="table  table-striped  table-bordered">
         <caption class="mt-4"><a href="{{ route('customers.add') }}"><button class="btn btn-info">Add
-                    product</button></a></caption>
+                    Customer</button></a></caption>
         <thead class="table-dark text-center ">
             <th>Id</th>
             <th>Customer Name</th>

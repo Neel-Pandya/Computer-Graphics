@@ -9,7 +9,7 @@ Add Products
 @section('content')
 <h4 class="text-primary text-center">Add Customer</h4>
 
-<form action="{{ route('customers.store') }}" method="POST" enctype="multipart/form-data ">
+<form action="{{ route('customers.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
     <div class="row">
         <div class="mt-4 col-lg-6 col-md-6 col-sm-12">

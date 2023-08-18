@@ -8,8 +8,9 @@ Admin Edit profile
 
 @section('content')
 <h4 class="text-primary text-center">Edit Profile</h4>
+    <img src="{{ URL::to('/') }}/images/faces/face1.jpg" />
 
-<form action="{{ route('admin.update') }}" method="POST" enctype="multipart/form-data ">
+        <form action="{{ route('admin.update') }}" method="POST" enctype="multipart/form-data ">
     @csrf
     <div class="row">
         <div class="mt-4 col-lg-6 col-md-6 col-sm-12">
@@ -34,9 +35,8 @@ Admin Edit profile
         </div>
 
 
-
       
-        <div class="mt-4 col-lg-12 col-md-12 col-sm-12">
+        <div class="mt-4 col-lg-6 col-md-6 col-sm-12">
             <label for="" class="form-label">Choose Profile</label>
             <input type="file" name="admin_profile" id="" class="form-control">
             <span class="text-danger">
@@ -61,5 +61,11 @@ Admin Edit profile
 
 
 </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
 
 @endsection

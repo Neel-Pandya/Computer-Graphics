@@ -10,7 +10,7 @@ Used Coupen
 @section('content')
 
 <table class="table  table-striped  table-bordered">
-    <caption class="mt-4"><a href="{{ route('products.add') }}"><button class="btn btn-info">Add product</button></a></caption>
+    {{-- <caption class="mt-4"><a href="{{ route('products.add') }}"><button class="btn btn-info">Add product</button></a></caption> --}}
     <thead class="table-dark text-center ">
         <th>Cust Id</th>
         <th>Customer name</th>
