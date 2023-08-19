@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +21,7 @@ Route::prefix('admin')->group(function () {
     Route::get('change_password', [AdminController::class, 'change_password'])->name('admin.change.password');
     Route::post('update_pass', [AdminController::class, 'update_password'])->name('admin.password');
     Route::post('update', [AdminController::class, 'admin_update'])->name('admin.update');
-    Route::view('login', 'pages.admin_login');
+    Route::view('login', 'pages.admin_login'); 
 
 
 
@@ -79,5 +80,13 @@ Route::prefix('admin')->group(function () {
 });
 
 Route::prefix('guest_user')->group(function () {
-    Route::get('index', [AdminController::class, 'guest_create']); 
+    Route::get('index', [UserController::class, 'guest_create'])->name('guest.create');
+    Route::get('products', [UserController::class, 'guest_products'])->name('guest.products');
+    Route::get('categories', [UserController::class, 'guest_categories'])->name('guest.category');
+    Route::get('contact', [UserController::class, 'guest_contact'])->name('guest.contact');
+    Route::get('login',[UserController::class, 'guest_login'])->name('guest.login'); 
+    Route::get('register',[UserController::class, 'guest_register'])->name('guest.register'); 
+    Route::post('confirm_register', [UserController::class, 'guest_register_validate'])->name('guest.confirm.register'); 
+    Route::post('send_contact', [UserController::class, 'guest_contact_validate'])->name('guest.confirm.contact');
+    Route::post('login_validate', [UserController::class, 'login_validate'])->name('guest.login.validate');  
 });

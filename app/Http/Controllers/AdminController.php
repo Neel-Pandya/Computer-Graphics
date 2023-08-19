@@ -210,6 +210,7 @@ class AdminController extends Controller
             'coupen_expire_date' => 'required',
             'coupen_discount' => 'required'
         ]);
+
     }
 
     public function coupen_use()
@@ -246,7 +247,5 @@ class AdminController extends Controller
         ]);
     }
 
-    public function guest_create(){
-        return view('guest.index'); 
-    }
+
 }

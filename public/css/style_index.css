@@ -8,6 +8,7 @@
 
 a {
     outline: 0;
+    cursor: pointer;
     }
 
 body{
@@ -182,4 +183,9 @@ img{
      .copy-right {
         font-size:19px;
     }
+
+}
+
+.active{
+    color: #f84258;
 }
