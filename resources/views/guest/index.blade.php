@@ -7,7 +7,7 @@ Home
 @section('content')
 
 <div class="index-main-img">
-    <a href="merlin.html"><img id="main-index-img" src="{{ URL::to('/') }}/images/index-img/Off-the-Wall.jpg" alt="" srcset=""></a>
+    <a><img id="main-index-img" src="{{ URL::to('/') }}/images/index-img/Off-the-Wall.jpg" alt="" srcset=""></a>
 </div>
 
 <br>
