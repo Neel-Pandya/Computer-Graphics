@@ -47,7 +47,7 @@ Home
 
 <!-- ALL THE LINKS WILL GO TO products.html -->
 <div class="index-grid-img-2">
-    <a href="products.html"><img src="{{ URL::to('/') }}/images/index-img/ethan-haddox-QHGcADeeT00-unsplash.jpg" id="trans-img"
+    <a href="{{ route('guest.products') }}"><img src="{{ URL::to('/') }}/images/index-img/ethan-haddox-QHGcADeeT00-unsplash.jpg" id="trans-img"
             alt=""></a>
     <a href="{{ route('guest.products') }}"><img src="{{ URL::to('/') }}/images/index-img/andres-jasso-PqbL_mxmaUE-unsplash (1).jpg" alt=""></a>
     <a href="{{ route('guest.products') }}"><img src="{{ URL::to('/') }}/images/index-img/raul-hender-afc4HxPy2GM-unsplash (1).jpg" alt=""></a>
