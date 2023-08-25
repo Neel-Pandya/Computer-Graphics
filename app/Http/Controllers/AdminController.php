@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -30,7 +31,6 @@ class AdminController extends Controller
             'product_for' => 'required',
             'product_size' => 'required|alpha',
             'product_image' => 'mimes:jpg,png',
-
         ]);
     }
     public function products_add()
@@ -47,7 +47,6 @@ class AdminController extends Controller
             'product_for' => 'required',
             'product_size' => 'required|alpha',
             'product_image' => 'required|mimes:jpg,png',
-
         ]);
     }
 
@@ -68,7 +67,6 @@ class AdminController extends Controller
     {
         $request->validate([
             'category_name' => 'required',
-
         ]);
     }
 
@@ -80,7 +78,6 @@ class AdminController extends Controller
     {
         $request->validate([
             'category_name' => 'required',
-
         ]);
     }
     public function customer_create()
@@ -100,7 +97,6 @@ class AdminController extends Controller
             'customer_gender' => 'required',
             'customer_number' => 'required|numeric|digits:10',
             'customer_profile' => 'required|mimes:jpg,png',
-
         ]);
     }
     public function customer_edit()
@@ -119,7 +115,6 @@ class AdminController extends Controller
             'admin_email' => 'required|email',
 
             'admin_profile' => 'required|mimes:jpg,png',
-
         ]);
     }
 
@@ -134,7 +129,6 @@ class AdminController extends Controller
             'new_password' => 'required|confirmed',
 
             'new_password_confirmation' => 'required',
-
         ]);
     }
     public function shoes()
@@ -172,8 +166,20 @@ class AdminController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
         ]);
+
+        $admin_details = DB::table('admin')
+            ->where('admin_email', $request->email)
+            ->where('admin_password', $request->password)
+            ->first();
+        if ($admin_details) {
+            session()->put('admin_email', $request->email);
+            session()->put('admin_password', $request->password);
+            return redirect()->route('admin.dashboard');
+        } else {
+            return redirect()->route('admin.login');
+        }
     }
 
     public function coupen_available()
@@ -194,7 +200,7 @@ class AdminController extends Controller
             'coupen_name' => 'required',
             'coupen_price' => 'required|numeric',
             'coupen_expire_date' => 'required',
-            'coupen_discount' => 'required'
+            'coupen_discount' => 'required',
         ]);
     }
 
@@ -208,9 +214,8 @@ class AdminController extends Controller
         $request->validate([
             'coupen_price' => 'required|numeric',
             'coupen_expire_date' => 'required',
-            'coupen_discount' => 'required'
+            'coupen_discount' => 'required',
         ]);
-
     }
 
     public function coupen_use()
@@ -226,7 +231,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
         ]);
     }
     public function user_register()
@@ -242,10 +247,13 @@ class AdminController extends Controller
             'pass' => 'required|confirmed',
             'pass_confirmation' => 'required',
             'gender' => 'required',
-            'profile' => 'required|mimes:png,jpg,jpeg'
-
+            'profile' => 'required|mimes:png,jpg,jpeg',
         ]);
     }
 
-
+    public function admin_logout(){
+        session()->forget('admin_email'); 
+        session()->forget('admin_password');
+        return redirect()->route('admin.dashboard'); 
+    }
 }
