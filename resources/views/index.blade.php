@@ -68,7 +68,7 @@ Dashboard
             <div class="card bg-c-blue order-card">
                 <div class="card-block">
                     <h6 class="m-b-20">Orders Received</h6>
-                    <h2 class="text-right"><i class="fa fa-cart-plus f-left"></i><span>100+</span></h2>
+                    <h3 class="text-left"><i class="fa fa-cart-plus f-right"></i><span>100+</span></h3>
                 </div>
             </div>
         </div>
@@ -77,7 +77,7 @@ Dashboard
             <div class="card bg-c-green order-card">
                 <div class="card-block">
                     <h6 class="m-b-20">Total Products</h6>
-                    <h2 class="text-right"><i class="fa fa-rocket f-left"></i><span>30+</span></h2>
+                    <h3 class="text-left"><i class="fa fa-rocket f-right"></i><span>30+</span></h3>
                     
                 </div>
             </div>
@@ -87,7 +87,7 @@ Dashboard
             <div class="card bg-c-yellow order-card">
                 <div class="card-block">
                     <h6 class="m-b-20">Cancelled Product</h6>
-                    <h2 class="text-right"><i class="fa fa-refresh f-left"></i><span>40+</span></h2>
+                    <h3 class="text-left"><i class="fa fa-refresh f-right"></i><span>40+</span></h3>
                     
                 </div>
             </div>
@@ -97,7 +97,7 @@ Dashboard
             <div class="card bg-c-pink order-card">
                 <div class="card-block">
                     <h6 class="m-b-20">Total Customer</h6>
-                    <h2 class="text-right"><i class="fa fa-credit-card f-left"></i><span>12</span></h2>
+                    <h3 class="text-left"><i class="fa fa-credit-card f-right"></i><span>12</span></h3>
                     
                 </div>
             </div>
@@ -106,7 +106,7 @@ Dashboard
             <div class="card bg-c-blue order-card">
                 <div class="card-block">
                     <h6 class="m-b-20">Active User</h6>
-                    <h2 class="text-right"><i class="fa fa-rocket f-left"></i><span>30+</span></h2>
+                    <h3 class="text-left"><i class="fa fa-rocket f-right"></i><span>30+</span></h3>
                     
                 </div>
             </div>
@@ -116,7 +116,7 @@ Dashboard
             <div class="card bg-c-green order-card">
                 <div class="card-block">
                     <h6 class="m-b-20">Returned Products</h6>
-                    <h2 class="text-right"><i class="fa fa-rocket f-left"></i><span>30+</span></h2>
+                    <h3 class="text-left"><i class="fa fa-rocket f-right"></i><span>30+</span></h3>
                     
                 </div>
             </div>
@@ -125,8 +125,8 @@ Dashboard
         <div class="col-md-4 col-xl-3">
             <div class="card bg-c-yellow order-card">
                 <div class="card-block">
-                    <h6 class="m-b-20">Total Product Categories</h6>
-                    <h2 class="text-right"><i class="fa fa-rocket f-left"></i><span>6</span></h2>
+                    <h6 class="m-b-20">Product Categories</h6>
+                    <h3 class="text-left"><i class="fa fa-rocket f-right"></i><span>6</span></h3>
                     
                 </div>
             </div>
@@ -135,8 +135,8 @@ Dashboard
         <div class="col-md-4 col-xl-3">
             <div class="card bg-c-pink order-card">
                 <div class="card-block">
-                    <h6 class="m-b-20">Total Registered Users</h6>
-                    <h2 class="text-right"><i class="fa fa-rocket f-left"></i><span>50+</span></h2>
+                    <h6 class="m-b-20">Registered Users</h6>
+                    <h3 class="text-left"><i class="fa fa-rocket f-right"></i><span>50+</span></h3>
                     
                 </div>
             </div>
