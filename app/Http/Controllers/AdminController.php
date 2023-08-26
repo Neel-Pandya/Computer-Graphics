@@ -4,23 +4,35 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class AdminController extends Controller
 {
+    public $admin_data;
+    public function setdata()
+    {
+        return $this->admin_data = DB::table('admin')->get();
+    }
+
     //
     public function create()
     {
-        return view('index');
+        $admin_data = $this->setdata();
+        return view('index', compact('admin_data'));
     }
 
     public function products()
     {
-        return view('pages.products');
+        $admin_data = $this->setdata();
+
+        return view('pages.products', compact('admin_data'));
     }
 
     public function products_edit()
     {
-        return view('pages.edit_products');
+        $admin_data = $this->setdata();
+
+        return view('pages.edit_products', compact('admin_data'));
     }
     public function products_update(Request $request)
     {
@@ -35,7 +47,9 @@ class AdminController extends Controller
     }
     public function products_add()
     {
-        return view('pages.product_add');
+        $admin_data = $this->setdata();
+
+        return view('pages.product_add', compact('admin_data'));
     }
 
     public function product_store(Request $request)
@@ -52,16 +66,22 @@ class AdminController extends Controller
 
     public function products_purchase()
     {
-        return view('pages.purchased_products');
+        $admin_data = $this->setdata();
+
+        return view('pages.purchased_products', compact('admin_data'));
     }
 
     public function category_create()
     {
-        return view('pages.category_available');
+        $admin_data = $this->setdata();
+
+        return view('pages.category_available', compact('admin_data'));
     }
     public function category_add()
     {
-        return view('pages.category_add');
+        $admin_data = $this->setdata();
+
+        return view('pages.category_add', compact('admin_data'));
     }
     public function category_store(Request $request)
     {
@@ -72,7 +92,9 @@ class AdminController extends Controller
 
     public function category_edit()
     {
-        return view('pages.category_edit');
+        $admin_data = $this->setdata();
+
+        return view('pages.category_edit', compact('admin_data'));
     }
     public function category_update(Request $request)
     {
@@ -82,11 +104,15 @@ class AdminController extends Controller
     }
     public function customer_create()
     {
-        return view('pages.customer_details');
+        $admin_data = $this->setdata();
+
+        return view('pages.customer_details', compact('admin_data'));
     }
     public function customer_add()
     {
-        return view('pages.customer_add');
+        $admin_data = $this->setdata();
+
+        return view('pages.customer_add', compact('admin_data'));
     }
 
     public function customer_store(Request $request)
@@ -101,11 +127,15 @@ class AdminController extends Controller
     }
     public function customer_edit()
     {
-        return view('pages.customer_edit');
+        $admin_data = $this->setdata();
+
+        return view('pages.customer_edit', compact('admin_data'));
     }
     public function admin_edit()
     {
-        return view('pages.admin_edit');
+        $admin_data = $this->setdata();
+
+        return view('pages.admin_edit', compact('admin_data'));
     }
 
     public function admin_update(Request $request)
@@ -113,53 +143,98 @@ class AdminController extends Controller
         $request->validate([
             'admin_name' => 'required',
             'admin_email' => 'required|email',
-
-            'admin_profile' => 'required|mimes:jpg,png',
         ]);
+        if ($request->has('profile')) {
+            # code...
+            $path = 'images/admin/' . $request->input('admin_profile');
+            $fileOriginalName = $request->file('profile')->getClientOriginalName();
+
+            if (File::exists($path)) {
+                File::delete($path);
+            }
+            $updateQuery = DB::table('admin')
+                ->where('admin_email', '=', $request->input('admin_email'))
+                ->update(['admin_name' => $request->input('admin_name'), 'admin_profile' => $fileOriginalName]);
+            if ($updateQuery) {
+                session()->flash('Success', 'Profile Updated Successfully');
+                $request->profile->move(public_path('images/admin/'), $fileOriginalName);
+            }
+        } else {
+            $updateQuery = DB::table('admin')
+                ->where('admin_email', '=', $request->input('admin_email'))
+                ->update(['admin_name' => $request->input('admin_name')]);
+        }
+        return redirect()->route('admin.edit');
     }
 
     public function change_password()
     {
-        return view('pages.change_password');
+        $admin_data = $this->setdata();
+
+        return view('pages.change_password', compact('admin_data'));
     }
     public function update_password(Request $request)
     {
         $request->validate([
             'old_password' => 'required',
-            'new_password' => 'required|confirmed',
+            'new_password' => 'required|confirmed|min:8|max:16',
 
             'new_password_confirmation' => 'required',
         ]);
+        if ($request->new_password == $request->old_password) {
+            session()->flash('Error', "The new Password cannot be old password"); 
+            return redirect()->route('admin.change.password'); 
+        } else {
+            $updateQueryForPassword = DB::table('admin')
+                ->where('admin_password', $request->old_password)
+                ->update(['admin_password' => $request->new_password]);
+            $updateQueryForPassword ? session()->flash('Success', 'Password Updated Successfully') : session()->flash('Error', 'Error in Updating the password');
+            return redirect()->route('admin.change.password');
+        }
     }
     public function shoes()
     {
-        return view('pages.shoes');
+        $admin_data = $this->setdata();
+
+        return view('pages.shoes', compact('admin_data'));
     }
     public function jeans()
     {
-        return view('pages.jeans');
+        $admin_data = $this->setdata();
+
+        return view('pages.jeans', compact('admin_data'));
     }
     public function hoodie()
     {
-        return view('pages.hoodie');
+        $admin_data = $this->setdata();
+
+        return view('pages.hoodie', compact('admin_data'));
     }
     public function shirt()
     {
-        return view('pages.shirt');
+        $admin_data = $this->setdata();
+
+        return view('pages.shirt', compact('admin_data'));
     }
 
     public function products_female()
     {
-        return view('pages.product_female');
+        $admin_data = $this->setdata();
+
+        return view('pages.product_female', compact('admin_data'));
     }
 
     public function products_male()
     {
-        return view('pages.products_male');
+        $admin_data = $this->setdata();
+
+        return view('pages.products_male', compact('admin_data'));
     }
     public function rate()
     {
-        return view('pages.rating');
+        $admin_data = $this->setdata();
+
+        return view('pages.rating', compact('admin_data'));
     }
 
     public function login(Request $request)
@@ -184,15 +259,21 @@ class AdminController extends Controller
 
     public function coupen_available()
     {
-        return view('pages.coupen');
+        $admin_data = $this->setdata();
+
+        return view('pages.coupen', compact('admin_data'));
     }
     public function coupen_add()
     {
-        return view('pages.coupen_add');
+        $admin_data = $this->setdata();
+
+        return view('pages.coupen_add', compact('admin_data'));
     }
     public function coupen_used()
     {
-        return view('pages.coupen_store');
+        $admin_data = $this->setdata();
+
+        return view('pages.coupen_store', compact('admin_data'));
     }
     public function coupen_store(Request $request)
     {
@@ -203,10 +284,11 @@ class AdminController extends Controller
             'coupen_discount' => 'required',
         ]);
     }
-
     public function coupen_edit()
     {
-        return view('pages.coupen_edit');
+        $admin_data = $this->setdata();
+
+        return view('pages.coupen_edit', compact('admin_data'));
     }
 
     public function coupen_update(Request $request)
@@ -220,12 +302,16 @@ class AdminController extends Controller
 
     public function coupen_use()
     {
-        return view('pages.coupen_used');
+        $admin_data = $this->setdata();
+
+        return view('pages.coupen_used', compact('admin_data'));
     }
 
     public function user_login()
     {
-        return view('users.user_login');
+        $admin_data = $this->setdata();
+
+        return view('users.user_login', compact('admin_data'));
     }
     public function user_store(Request $request)
     {
@@ -236,7 +322,9 @@ class AdminController extends Controller
     }
     public function user_register()
     {
-        return view('users.user_register');
+        $admin_data = $this->setdata();
+
+        return view('users.user_register', compact('admin_data'));
     }
     public function user_register_validate(Request $request)
     {
@@ -251,9 +339,10 @@ class AdminController extends Controller
         ]);
     }
 
-    public function admin_logout(){
-        session()->forget('admin_email'); 
+    public function admin_logout()
+    {
+        session()->forget('admin_email');
         session()->forget('admin_password');
-        return redirect()->route('admin.dashboard'); 
+        return redirect()->route('admin.dashboard');
     }
 }

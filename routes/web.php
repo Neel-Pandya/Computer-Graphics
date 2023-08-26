@@ -15,6 +15,7 @@ use App\Http\Controllers\UserController;
 |
 */
 
+
 Route::prefix('admin')->group(function () {
     Route::view('login', 'pages.admin_login')
         ->name('admin.login')
@@ -97,3 +98,6 @@ Route::prefix('guest_user')->group(function () {
     Route::post('send_contact', [UserController::class, 'guest_contact_validate'])->name('guest.confirm.contact');
     Route::post('login_validate', [UserController::class, 'login_validate'])->name('guest.login.validate');
 });
+
+
+

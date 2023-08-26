@@ -8,14 +8,18 @@ Admin Edit profile
 
 @section('content')
 <h4 class="text-primary text-center">Change Password</h4>
+@foreach ($admin_data as $admin )
+    
+@endforeach
 
-<form action="{{ route('admin.password') }}" method="POST" enctype="multipart/form-data ">
+<form action="{{ route('admin.password') }}" method="POST"
+>
     @csrf
     <div class="row">
         <div class="mt-4 col-lg-6 col-md-6 col-sm-12">
             <label for="" class="form-label">old password</label>
             <input type="text" name="old_password" id="" class="form-control" placeholder="Enter old password"
-                value="{{ old('old_password') }}">
+                value="{{ $admin->admin_password }}" readonly>
             <span class="text-danger">
                 @error('old_password')
                 {{ $message }}

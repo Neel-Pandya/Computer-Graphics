@@ -13,7 +13,10 @@
          
           <li class="nav-item nav-profile dropdown">
             <a class="nav-link dropdown-toggle" href="{{ route('admin.dashboard') }}" data-toggle="dropdown" id="profileDropdown">
-              <img src="{{ URL::to('/') }}/images/admin/default.jpg" alt="profile"/>
+              @foreach ($admin_data as $data)
+              <img src="{{ URL::to('/') }}/images/admin/{{ $data->admin_profile}}" alt="profile"/>
+                
+              @endforeach
             </a>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
               <a class="dropdown-item" href="{{ route('admin.edit') }}">
