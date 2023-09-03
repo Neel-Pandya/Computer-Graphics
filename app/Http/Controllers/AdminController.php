@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
+use Psy\Readline\Hoa\Console;
 
 class AdminController extends Controller
 {
     public $admin_data;
+
     public function setdata()
     {
         return $this->admin_data = DB::table('admin')->get();
@@ -48,8 +52,16 @@ class AdminController extends Controller
     public function products_add()
     {
         $admin_data = $this->setdata();
+        $product_sizes = DB::table('sizes')
+            ->select('size_name')
+            ->where('status', 'Active')
+            ->get();
 
-        return view('pages.product_add', compact('admin_data'));
+        $product_category = DB::table('categories')
+            ->where('status', 'Active')
+            ->get();
+
+        return view('pages.product_add', compact('admin_data', 'product_sizes', 'product_category'));
     }
 
     public function product_store(Request $request)
@@ -74,8 +86,8 @@ class AdminController extends Controller
     public function category_create()
     {
         $admin_data = $this->setdata();
-
-        return view('pages.category_available', compact('admin_data'));
+        $category_data = DB::table('categories')->paginate(3);
+        return view('pages.category_available', compact('admin_data', 'category_data'));
     }
     public function category_add()
     {
@@ -88,6 +100,14 @@ class AdminController extends Controller
         $request->validate([
             'category_name' => 'required',
         ]);
+
+        $storeCategory = DB::table('categories')->insert([
+            'category_name' => $request->category_name,
+            'status' => 'Active',
+        ]);
+        $storeCategory ? session()->flash('Success', 'Category added successfully') : session()->flash('Error', 'Error in adding category');
+
+        return redirect()->route('category.available');
     }
 
     public function category_edit()
@@ -156,13 +176,15 @@ class AdminController extends Controller
                 ->where('admin_email', '=', $request->input('admin_email'))
                 ->update(['admin_name' => $request->input('admin_name'), 'admin_profile' => $fileOriginalName]);
             if ($updateQuery) {
-                session()->flash('Success', 'Profile Updated Successfully');
                 $request->profile->move(public_path('images/admin/'), $fileOriginalName);
+                session()->flash('Success', 'Profile Updated Successfully');
             }
         } else {
             $updateQuery = DB::table('admin')
                 ->where('admin_email', '=', $request->input('admin_email'))
                 ->update(['admin_name' => $request->input('admin_name')]);
+
+            $updateQuery ? session()->flash('Success', 'Profile updated successfully') : session()->flash('Error', 'Error in updating the profile');
         }
         return redirect()->route('admin.edit');
     }
@@ -182,8 +204,8 @@ class AdminController extends Controller
             'new_password_confirmation' => 'required',
         ]);
         if ($request->new_password == $request->old_password) {
-            session()->flash('Error', "The new Password cannot be old password"); 
-            return redirect()->route('admin.change.password'); 
+            session()->flash('Error', 'The new Password cannot be old password');
+            return redirect()->route('admin.change.password');
         } else {
             $updateQueryForPassword = DB::table('admin')
                 ->where('admin_password', $request->old_password)
@@ -344,5 +366,181 @@ class AdminController extends Controller
         session()->forget('admin_email');
         session()->forget('admin_password');
         return redirect()->route('admin.dashboard');
+    }
+
+    public function sizes_available()
+    {
+        $admin_data = $this->setdata();
+
+        $sizeData = DB::table('sizes')
+            ->orderBy('size_name')
+            ->paginate(3);
+
+        return view('pages.sizes', compact('admin_data', 'sizeData'));
+    }
+
+    public function sizes_add()
+    {
+        $admin_data = $this->setData();
+        return view('pages.addSizes', compact('admin_data'));
+    }
+
+    public function sizes_store(Request $request)
+    {
+        $request->validate(
+            [
+                'product_size' => 'required|regex:/^[A-Z]{1,4}$/',
+            ],
+            [
+                'product_size.required' => 'This field is required',
+                'product_size.regex' => 'Product size must be of less than or equal to 4 character and only capital letters allowed',
+            ],
+        );
+
+        $sizesAddData = DB::table('sizes')->insert([
+            'size_name' => $request->product_size,
+            'status' => 'Active',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $sizesAddData ? session()->flash('Success', 'Size added successfully') : session()->flash('Error', 'Error in inserting the Size');
+        return redirect()->route('sizes.available');
+    }
+
+    public function deactviate_sizes(string $size_name)
+    {
+        $check = DB::table('sizes')
+            ->where('size_name', $size_name)
+            ->first();
+        if ($check) {
+            $checkIfSizeStatusIsActive = DB::table('sizes')
+                ->where('size_name', $size_name)
+                ->where('status', 'Active')
+                ->update(['status' => 'Deactive']);
+            $checkIfSizeStatusIsActive ? session()->flash('Success', 'Status updated successfully') : session()->flash('Error', 'Error in updating status');
+        } else {
+            session()->flash('Error', "Size name $size_name not found");
+        }
+        return redirect()->route('sizes.available');
+    }
+
+    public function activate_sizes(string $size_name)
+    {
+        $check = DB::table('sizes')
+            ->where('size_name', $size_name)
+            ->first();
+        if ($check) {
+            $checkIfSizeStatusIsActive = DB::table('sizes')
+                ->where('size_name', $size_name)
+                ->where('status', 'Deactive')
+                ->update(['status' => 'Active']);
+            $checkIfSizeStatusIsActive ? session()->flash('Success', 'Status updated successfully') : session()->flash('Error', 'Error in updating status');
+        } else {
+            session()->flash('Error', "Size name $size_name not found");
+        }
+        return redirect()->route('sizes.available');
+    }
+    public function delete_sizes(string $size_name)
+    {
+        $check = DB::table('sizes')
+            ->where('size_name', $size_name)
+            ->first();
+        if ($check) {
+            $setSizeStatusDeleted = DB::table('sizes')
+                ->where('size_name', $size_name)
+                ->update(['status' => 'Deleted']);
+
+            $setSizeStatusDeleted ? session()->flash('Success', 'status updated successfully') : session()->flash('Error', 'Error in updating the status');
+        } else {
+            session()->flash('Error', "Size $size_name not found");
+        }
+
+        return redirect()->route('sizes.available');
+    }
+
+    public function reactivate_sizes(string $size_name)
+    {
+        $check = DB::table('sizes')
+            ->where('size_name', $size_name)
+            ->first();
+
+        if ($check) {
+            $checkIfSizeStatusIsDeleted = DB::table('sizes')
+                ->where('size_name', $size_name)
+                ->where('status', 'Deleted')
+                ->update(['status' => 'Active']);
+
+            $checkIfSizeStatusIsDeleted ? session()->flash('Success', 'Status updated successfully') : session()->flash('Error', 'Error in updating status');
+        } else {
+            session()->flash('Error', "Size $size_name not found");
+        }
+        return redirect()->route('sizes.available');
+    }
+
+    public function activate_category(string $category_name)
+    {
+        $checkIfCategoryExists = DB::table('categories')
+            ->where('category_name', $category_name)
+            ->first();
+        if ($checkIfCategoryExists) {
+            $checkIfCategoryStatusUpdated = DB::table('categories')
+                ->where('category_name', $category_name)
+                ->where('status', 'Deactive')
+                ->update(['status' => 'Active']);
+            $checkIfCategoryStatusUpdated ? session()->flash('Success', 'Category status updated successfully') : session()->flash('Error', 'Error in updating category status');
+        } else {
+            session()->flash('Error', "Category $category_name not found");
+        }
+        return redirect()->route('category.available');
+    }
+
+    public function deactivate_category(string $category_name)
+    {
+        $checkIfCategoryExists = DB::table('categories')
+            ->where('category_name', $category_name)
+            ->first();
+        if ($checkIfCategoryExists) {
+            $checkIfCategoryStatusUpdated = DB::table('categories')
+                ->where('category_name', $category_name)
+                ->where('status', 'Active')
+                ->update(['status' => 'Deactive']);
+            $checkIfCategoryStatusUpdated ? session()->flash('Success', 'Category status updated successfully') : session()->flash('Error', 'Error in updating category status');
+        } else {
+            session()->flash('Error', "Category $category_name not found");
+        }
+        return redirect()->route('category.available');
+    }
+
+    public function delete_category(string $category_name)
+    {
+        $checkIfCategoryExists = DB::table('categories')
+            ->where('category_name', $category_name)
+            ->first();
+        if ($checkIfCategoryExists) {
+            $checkIfCategoryStatusDeleted = DB::table('categories')
+                ->where('category_name', $category_name)
+                ->update(['status' => 'Deleted']);
+            $checkIfCategoryStatusDeleted ? session()->flash('Success', 'Category status updated successfully') : session()->flash('Error', 'Error in updating category status');
+        } else {
+            session()->flash('Error', "Category $category_name not found");
+        }
+        return redirect()->route('category.available');
+    }
+
+    public function reactivate_category(string $category_name)
+    {
+        $checkIfCategoryExists = DB::table('categories')
+            ->where('category_name', $category_name)
+            ->first();
+        if ($checkIfCategoryExists) {
+            $checkIfCategoryStatusReactivated = DB::table('categories')
+                ->where('category_name', $category_name)
+                ->where('status', 'Deleted')
+                ->update(['status' => 'Active']);
+            $checkIfCategoryStatusReactivated ? session()->flash('Success', 'Category status updated successfully') : session()->flash('Error', 'Error in updating category status');
+        } else {
+            session()->flash('Error', "Category $category_name not found");
+        }
+        return redirect()->route('category.available');
     }
 }

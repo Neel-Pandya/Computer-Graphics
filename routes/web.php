@@ -15,15 +15,13 @@ use App\Http\Controllers\UserController;
 |
 */
 
-
 Route::prefix('admin')->group(function () {
     Route::view('login', 'pages.admin_login')
         ->name('admin.login')
         ->middleware('Auth.success');
     Route::post('login_validate', [AdminController::class, 'login'])->name('login.validate');
 
-
-    // Authentication using middleware 
+    // Authentication using middleware
 
     Route::middleware('Auth.admin')->group(function () {
         Route::get('dashboard', [AdminController::class, 'create'])->name('admin.dashboard');
@@ -31,7 +29,7 @@ Route::prefix('admin')->group(function () {
         Route::get('change_password', [AdminController::class, 'change_password'])->name('admin.change.password');
         Route::post('update_pass', [AdminController::class, 'update_password'])->name('admin.password');
         Route::post('update', [AdminController::class, 'admin_update'])->name('admin.update');
-        Route::get('logout', [AdminController::class, 'admin_logout'])->name('admin.logout'); 
+        Route::get('logout', [AdminController::class, 'admin_logout'])->name('admin.logout');
 
         Route::prefix('products')->group(function () {
             Route::get('avialable_products', [AdminController::class, 'products'])->name('products.available');
@@ -48,16 +46,20 @@ Route::prefix('admin')->group(function () {
             Route::post('category_store', [AdminController::class, 'category_store'])->name('category.store');
             Route::get('category_edit', [AdminController::class, 'category_edit'])->name('category.edit');
             Route::post('category_update', [AdminController::class, 'category_update'])->name('category.update');
-            Route::post('customer_store', [AdminController::class, 'customer_store'])->name('customers.store');
             Route::get('shoes', [AdminController::class, 'shoes'])->name('category.shoes');
             Route::get('shirt', [AdminController::class, 'shirt'])->name('category.shirt');
             Route::get('jeans', [AdminController::class, 'jeans'])->name('category.jeans');
             Route::get('hoodie', [AdminController::class, 'hoodie'])->name('category.hoodie');
+            Route::get('activate/{category_name}', [AdminController::class, 'activate_category'])->name('category.activate');
+            Route::get('deactivate/{category_name}', [AdminController::class, 'deactivate_category'])->name('category.deactivate');
+            Route::get('delete/{category_name}', [AdminController::class, 'delete_category'])->name('category.delete');
+            Route::get('reactivate/{category_name}', [AdminController::class, 'reactivate_category'])->name('category.reactivate');
         });
 
         Route::prefix('customers')->group(function () {
             Route::get('customer_details', [AdminController::class, 'customer_create'])->name('customers.details');
             Route::get('add', [AdminController::class, 'customer_add'])->name('customers.add');
+            Route::post('customer_store', [AdminController::class, 'customer_store'])->name('customers.store');
             Route::get('customer_edit', [AdminController::class, 'customer_edit'])->name('customer.edit');
             Route::post('customer_update', [AdminController::class, 'customer_update'])->name('customer.update');
         });
@@ -80,6 +82,18 @@ Route::prefix('admin')->group(function () {
             Route::get('used_coupen', [AdminController::class, 'coupen_use'])->name('coupen.use');
         });
 
+        Route::prefix('sizes')->group(function () {
+
+            Route::get('available', [AdminController::class, 'sizes_available'])->name('sizes.available');
+            Route::get('add', [AdminController::class, 'sizes_add'])->name('sizes.add');
+            Route::post('store', [AdminController::class, 'sizes_store'])->name('sizes.store');
+            Route::get('deactivate/{size_name}', [AdminController::class, 'deactviate_sizes'])->name('sizes.deactivate');
+            Route::get('activate/{size_name}', [AdminController::class, 'activate_sizes'])->name('sizes.activate');
+            Route::get('delete/{size_name}', [AdminController::class, 'delete_sizes'])->name('sizes.delete');
+            Route::get('reactive/{size_name}', [AdminController::class, 'reactivate_sizes'])->name('sizes.reactivate');
+        });
+
+
         Route::get('user_login', [AdminController::class, 'user_login'])->name('user.login');
         Route::post('user_store', [AdminController::class, 'user_store'])->name('user.store');
         Route::get('user_register', [AdminController::class, 'user_register'])->name('user.register');
@@ -90,7 +104,7 @@ Route::prefix('admin')->group(function () {
 Route::prefix('guest_user')->group(function () {
     Route::get('index', [UserController::class, 'guest_create'])->name('guest.create');
     Route::get('products', [UserController::class, 'guest_products'])->name('guest.products');
-    Route::get('categories', [UserController::class, 'guest_categories'])->name('guest.category');
+    Route::get('categories', [UserController::class, 'guest_categosries'])->name('guest.category');
     Route::get('contact', [UserController::class, 'guest_contact'])->name('guest.contact');
     Route::get('login', [UserController::class, 'guest_login'])->name('guest.login');
     Route::get('register', [UserController::class, 'guest_register'])->name('guest.register');
@@ -98,6 +112,3 @@ Route::prefix('guest_user')->group(function () {
     Route::post('send_contact', [UserController::class, 'guest_contact_validate'])->name('guest.confirm.contact');
     Route::post('login_validate', [UserController::class, 'login_validate'])->name('guest.login.validate');
 });
-
-
-

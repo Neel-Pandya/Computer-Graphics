@@ -94,6 +94,14 @@
                     <li class="nav-item"><a href="{{ route('coupen.use') }}" class="nav-link">Used Coupen</a></li>
                 </ul>
             </div>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('sizes.available') }}">
+                <i class="icon-grid menu-icon"></i>
+                <span class="menu-title">Sizes</span>
+
+            </a>
+        </li>
         </li>
     </ul>
 </nav>

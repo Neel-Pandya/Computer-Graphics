@@ -25,7 +25,7 @@ Products
                 <td>200 Rs</td>
                 <td>Hoodie</td>
                 <td>Male</td>
-                <td><img src="{{ URL::to('/') }}/images/products/pexels-gabriel-freytez-341523.jpg" alt="" srcset="">
+                <td><img src="{{ URL::to('/') }}/images/products/pexels-gabriel-freytez-341523.jpg" alt=""  srcset="">
                 </td>
                 <td><button class="btn btn-danger">Deactivate</button></td>
                 <td><a href="{{ route('products.edit') }}"><button class="btn btn-info">Edit</button></a></td>
