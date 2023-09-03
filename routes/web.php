@@ -92,12 +92,6 @@ Route::prefix('admin')->group(function () {
             Route::get('delete/{size_name}', [AdminController::class, 'delete_sizes'])->name('sizes.delete');
             Route::get('reactive/{size_name}', [AdminController::class, 'reactivate_sizes'])->name('sizes.reactivate');
         });
-
-
-        Route::get('user_login', [AdminController::class, 'user_login'])->name('user.login');
-        Route::post('user_store', [AdminController::class, 'user_store'])->name('user.store');
-        Route::get('user_register', [AdminController::class, 'user_register'])->name('user.register');
-        Route::post('user_register_validate', [AdminController::class, 'user_register_validate'])->name('user.register.validate');
     });
 });
 
