@@ -27,7 +27,7 @@ class AdminController extends Controller
         $admin_data = $this->setdata();
         if ($request->input('search')) {
             $getProductsRecord = DB::table('products')
-                ->orWhere('Product_category', 'like', '%' . $request->search . '%')
+                ->where('Product_category', 'like', '%' . $request->search . '%')
                 ->orWhere('Product_for', $request->search)
                 ->orWhere('Product_price', 'like', '%' . $request->search . '%')
                 ->orWhere('Product_size', $request->search)
