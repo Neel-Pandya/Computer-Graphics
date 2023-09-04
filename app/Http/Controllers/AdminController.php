@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Validator;
-use Psy\Readline\Hoa\Console;
 
 class AdminController extends Controller
 {
@@ -25,11 +22,22 @@ class AdminController extends Controller
         return view('index', compact('admin_data'));
     }
 
-    public function products()
+    public function products(Request $request)
     {
         $admin_data = $this->setdata();
+        if ($request->input('search')) {
+            $getProductsRecord = DB::table('products')
+                ->orWhere('Product_category', 'like', '%' . $request->search . '%')
+                ->orWhere('Product_for', $request->search)
+                ->orWhere('Product_price', 'like', '%' . $request->search . '%')
+                ->orWhere('Product_size', $request->search)
+                ->orWhere('Product_status', 'like', '%' . $request->search . '%')
+                ->paginate(4);
+        } else {
+            $getProductsRecord = DB::table('products')->paginate(4);
+        }
 
-        return view('pages.products', compact('admin_data'));
+        return view('pages.products', compact('admin_data', 'getProductsRecord'));
     }
 
     public function products_edit()
@@ -38,6 +46,7 @@ class AdminController extends Controller
 
         return view('pages.edit_products', compact('admin_data'));
     }
+
     public function products_update(Request $request)
     {
         $request->validate([
@@ -71,9 +80,32 @@ class AdminController extends Controller
             'product_price' => 'required|numeric',
             'product_category' => 'required',
             'product_for' => 'required',
-            'product_size' => 'required|alpha',
-            'product_image' => 'required|mimes:jpg,png',
+            'product_size' => 'required',
+            'product_image' => 'required|mimes:jpg,png,jpeg,avif',
         ]);
+
+        $productImageOriginalName = $request->file('product_image')->getClientOriginalName();
+
+        $insertProduct = DB::table('products')->insertOrIgnore([
+            'Product_name' => $request->product_name,
+            'Product_price' => $request->product_price,
+            'Product_category' => $request->product_category,
+            'Product_for' => $request->product_for,
+            'Product_size' => $request->product_size,
+            'Product_image' => $productImageOriginalName,
+            'Product_status' => 'Active',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        if ($insertProduct) {
+            $request->product_image->move(public_path('images/products/'), $productImageOriginalName);
+            session()->flash('Success', 'Product added successfully');
+        } else {
+            session()->flash('Error', 'Error in inserting the product');
+        }
+
+        return redirect()->route('products.available');
     }
 
     public function products_purchase()

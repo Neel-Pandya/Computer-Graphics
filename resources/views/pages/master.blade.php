@@ -70,7 +70,7 @@
     <!-- Custom js for this page-->
     <script src="{{ URL::to('/') }}/js/dashboard.js"></script>
     <script src="{{ URL::to('/') }}/js/Chart.roundedBarCharts.js"></script>
-
+    
     @stack('scripts')
     <!-- End custom js for this page-->
   </body>

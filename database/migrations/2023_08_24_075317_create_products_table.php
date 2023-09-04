@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $products_gender = ['Male', 'Female'];
             $table->id('Product_id');
-            $table->string('Product_name')->nullable(false); 
-            $table->string('Product_price')->nullable(false); 
-            $table->string('Product_category')->nullable(false); 
-            $table->enum('Product_for', $products_gender);  
-            $table->string('Product_size')->nullable(false); 
-            $table->string('Product_image')->nullable(false); 
+            $table->string('Product_name')->nullable(false);
+            $table->string('Product_price')->nullable(false);
+            $table->string('Product_category')->nullable(false);
+            $table->enum('Product_for', $products_gender);
+            $table->string('Product_size')->nullable(false);
+            $table->string('Product_image')->nullable(false);
+            $table->string('Product_status')->nullable(false);
             $table->timestamps();
         });
     }
