@@ -40,11 +40,12 @@ class AdminController extends Controller
         return view('pages.products', compact('admin_data', 'getProductsRecord'));
     }
 
-    public function products_edit(string $product_name)
+    public function products_edit(string $product_name, string $product_size)
     {
         $admin_data = $this->setdata();
         $products_data = DB::table('products')
             ->where('Product_name', $product_name)
+            ->where('Product_size', $product_size)
             ->first();
 
         if ($products_data) {

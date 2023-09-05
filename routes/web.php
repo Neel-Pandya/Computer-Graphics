@@ -33,7 +33,7 @@ Route::prefix('admin')->group(function () {
 
         Route::prefix('products')->group(function () {
             Route::get('avialable_products', [AdminController::class, 'products'])->name('products.available');
-            Route::get('edit/{product_name}', [AdminController::class, 'products_edit'])->name('products.edit');
+            Route::get('edit/{product_name}/{product_size}', [AdminController::class, 'products_edit'])->name('products.edit');
             Route::post('update', [AdminController::class, 'products_update'])->name('products.update');
             Route::get('add_product', [AdminController::class, 'products_add'])->name('products.add');
             Route::post('product_store', [AdminController::class, 'product_store'])->name('products.store');

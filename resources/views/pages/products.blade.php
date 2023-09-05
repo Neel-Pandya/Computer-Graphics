@@ -82,7 +82,7 @@
                                                 class="btn btn-danger">Reactivate</button></a>
                                     @endif
                                 </td>
-                                <td><a href="{{ route('products.edit', ['product_name' => $record->Product_name]) }}"><button
+                                <td><a href="{{ route('products.edit', ['product_name' => $record->Product_name, 'product_size' => $record->Product_size]) }}"><button
                                             class="btn btn-primary">Edit</button></a></td>
                                 <td><a href="{{ route('products.delete', ['product_name' => $record->Product_name, 'product_size' => $record->Product_size]) }}"><button
                                             class="btn btn-danger">Delete</button></a></td>
