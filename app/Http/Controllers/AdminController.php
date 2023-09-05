@@ -40,11 +40,27 @@ class AdminController extends Controller
         return view('pages.products', compact('admin_data', 'getProductsRecord'));
     }
 
-    public function products_edit()
+    public function products_edit(string $product_name)
     {
         $admin_data = $this->setdata();
+        $products_data = DB::table('products')
+            ->where('Product_name', $product_name)
+            ->first();
 
-        return view('pages.edit_products', compact('admin_data'));
+        if ($products_data) {
+            $product_category_data = DB::table('categories')
+                ->where('category_name', '<>', $products_data->Product_category)
+                ->get();
+            $genders = $products_data->Product_for == 'Male' ? 'Female' : 'Male';
+            $product_sizes = DB::table('sizes')
+                ->where('size_name', '<>', $products_data->Product_size)
+                ->get();
+
+            return view('pages.edit_products', compact('admin_data', 'products_data', 'product_category_data', 'genders', 'product_sizes'));
+        } else {
+            session()->flash('Error', "Product $product_name not found");
+            return redirect()->route('products.available');
+        }
     }
 
     public function products_update(Request $request)
@@ -85,29 +101,37 @@ class AdminController extends Controller
         ]);
 
         $productImageOriginalName = $request->file('product_image')->getClientOriginalName();
+        $existingProduct = DB::table('products')
+            ->where('Product_name', $request->product_name)
+            ->where('Product_size', $request->product_size)
+            ->first();
 
-        $insertProduct = DB::table('products')->insertOrIgnore([
-            'Product_name' => $request->product_name,
-            'Product_price' => $request->product_price,
-            'Product_category' => $request->product_category,
-            'Product_for' => $request->product_for,
-            'Product_size' => $request->product_size,
-            'Product_image' => $productImageOriginalName,
-            'Product_status' => 'Active',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        if (!$existingProduct) {
+            // If no matching product is found, insert the new product
+            $insertProduct = DB::table('products')->insertOrIgnore([
+                'Product_name' => $request->product_name,
+                'Product_price' => $request->product_price,
+                'Product_category' => $request->product_category,
+                'Product_for' => $request->product_for,
+                'Product_size' => $request->product_size,
+                'Product_image' => $productImageOriginalName,
+                'Product_status' => 'Active',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
-        if ($insertProduct) {
-            $request->product_image->move(public_path('images/products/'), $productImageOriginalName);
-            session()->flash('Success', 'Product added successfully');
+            if ($insertProduct) {
+                $request->product_image->move(public_path('images/products/'), $productImageOriginalName);
+                session()->flash('Success', 'Product added successfully');
+            } else {
+                session()->flash('Error', 'Error in inserting the product');
+            }
         } else {
-            session()->flash('Error', 'Error in inserting the product');
+            session()->flash('Error', 'A product with the same name and size already exists');
         }
 
         return redirect()->route('products.available');
     }
-
     public function products_purchase()
     {
         $admin_data = $this->setdata();
@@ -115,6 +139,83 @@ class AdminController extends Controller
         return view('pages.purchased_products', compact('admin_data'));
     }
 
+    public function products_deactivate(string $product_name, string $product_size)
+    {
+        $productIfExists = DB::table('products')
+            ->where('Product_name', $product_name)
+            ->where('Product_size', $product_size)
+            ->where('Product_status', 'Active')
+            ->first();
+        if ($productIfExists) {
+            $productDeactivateQuery = DB::table('products')
+                ->where('Product_name', $product_name)
+                ->where('Product_size', $product_size)
+                ->where('Product_status', 'Active')
+                ->update(['Product_status' => 'Inactive']);
+            $productDeactivateQuery ? session()->flash('Success', 'Product status updated successfully') : session()->flash('Error', 'Error in updating Product Status');
+        } else {
+            session()->flash('Error', "Product $product_name with size $product_size not found");
+        }
+        return redirect()->route('products.available');
+    }
+
+    public function products_activate(string $product_name, string $product_size)
+    {
+        $productIfExists = DB::table('products')
+            ->where('Product_name', $product_name)
+            ->where('Product_size', $product_size)
+            ->where('Product_status', 'Inactive')
+            ->first();
+        if ($productIfExists) {
+            $productDeactivateQuery = DB::table('products')
+                ->where('Product_name', $product_name)
+                ->where('Product_size', $product_size)
+                ->where('Product_status', 'Inactive')
+                ->update(['Product_status' => 'Active']);
+            $productDeactivateQuery ? session()->flash('Success', 'Product status updated successfully') : session()->flash('Error', 'Error in updating Product Status');
+        } else {
+            session()->flash('Error', "Product $product_name with size $product_size not found");
+        }
+        return redirect()->route('products.available');
+    }
+
+    public function products_delete(string $product_name, string $product_size)
+    {
+        $productIfExists = DB::table('products')
+            ->where('Product_name', $product_name)
+            ->where('Product_size', $product_size)
+            ->first();
+        if ($productIfExists) {
+            $productDeactivateQuery = DB::table('products')
+                ->where('Product_name', $product_name)
+                ->where('Product_size', $product_size)
+                ->update(['Product_status' => 'Deleted']);
+            $productDeactivateQuery ? session()->flash('Success', 'Product status updated successfully') : session()->flash('Error', 'Error in updating Product Status');
+        } else {
+            session()->flash('Error', "Product $product_name with size $product_size not found");
+        }
+        return redirect()->route('products.available');
+    }
+
+    public function product_reactivate(string $product_name, string $product_size)
+    {
+        $productIfExists = DB::table('products')
+            ->where('Product_name', $product_name)
+            ->where('Product_size', $product_size)
+            ->where('Product_status', 'Deleted')
+            ->first();
+        if ($productIfExists) {
+            $productDeactivateQuery = DB::table('products')
+                ->where('Product_name', $product_name)
+                ->where('Product_size', $product_size)
+                ->where('Product_status', 'Deleted')
+                ->update(['Product_status' => 'Active']);
+            $productDeactivateQuery ? session()->flash('Success', 'Product status updated successfully') : session()->flash('Error', 'Error in updating Product Status');
+        } else {
+            session()->flash('Error', "Product $product_name with size $product_size not found");
+        }
+        return redirect()->route('products.available');
+    }
     public function category_create()
     {
         $admin_data = $this->setdata();

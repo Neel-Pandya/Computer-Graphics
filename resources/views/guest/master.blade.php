@@ -16,14 +16,14 @@
     <link rel="stylesheet" href="{{ URL::to('/') }}/css/nav.css">
     <link rel="stylesheet" href="{{ URL::to('/') }}/css/products.css">
     <link rel="stylesheet" href="{{ URL::to('/') }}/css/categories.css">
-    
+
+
 </head>
 
 <body>
     {{--  User navbar --}}
 
     @include('guest.user_nav')
-
     {{-- User navbar end --}}
 
     @yield('content')

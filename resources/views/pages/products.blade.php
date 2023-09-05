@@ -67,9 +67,26 @@
                                 <td>{{ $record->Product_size }}</td>
                                 <td><img src="{{ URL::to('/') }}/images/products/{{ $record->Product_image }}"
                                         alt="" class="img-fluid img-sm"></td>
-                                <td>{{ $record->Product_status }}</td>
-                                <td><a href=""><button class="btn btn-primary">Edit</button></a></td>
-                                <td><a href=""><button class="btn btn-danger">Delete</button></a></td>
+                                <td>
+                                    @if ($record->Product_status == 'Active')
+                                        <a
+                                            href="{{ route('products.deactivate', ['product_name' => $record->Product_name, 'product_size' => $record->Product_size]) }}"><button
+                                                class="btn btn-danger">Deactivate</button></a>
+                                    @elseif($record->Product_status == 'Inactive')
+                                        <a
+                                            href="{{ route('products.activate', ['product_name' => $record->Product_name, 'product_size' => $record->Product_size]) }}"><button
+                                                class="btn btn-success">Activate</button></a>
+                                    @elseif($record->Product_status == 'Deleted')
+                                        <a
+                                            href="{{ route('products.reactivate', ['product_name' => $record->Product_name, 'product_size' => $record->Product_size]) }}"><button
+                                                class="btn btn-danger">Reactivate</button></a>
+                                    @endif
+                                </td>
+                                <td><a href="{{ route('products.edit', ['product_name' => $record->Product_name]) }}"><button
+                                            class="btn btn-primary">Edit</button></a></td>
+                                <td><a href="{{ route('products.delete', ['product_name' => $record->Product_name, 'product_size' => $record->Product_size]) }}"><button
+                                            class="btn btn-danger">Delete</button></a></td>
+
                             </tr>
                         @empty
                             <td colspan="10" class="text-center">

@@ -33,11 +33,16 @@ Route::prefix('admin')->group(function () {
 
         Route::prefix('products')->group(function () {
             Route::get('avialable_products', [AdminController::class, 'products'])->name('products.available');
-            Route::get('edit', [AdminController::class, 'products_edit'])->name('products.edit');
+            Route::get('edit/{product_name}', [AdminController::class, 'products_edit'])->name('products.edit');
             Route::post('update', [AdminController::class, 'products_update'])->name('products.update');
             Route::get('add_product', [AdminController::class, 'products_add'])->name('products.add');
             Route::post('product_store', [AdminController::class, 'product_store'])->name('products.store');
             Route::get('purchased_products', [AdminController::class, 'products_purchase'])->name('products.purchase');
+            Route::get('delete/{product_name}/{product_size}', [AdminController::class, 'products_delete'])->name('products.delete');
+            Route::get('activate/{product_name}/{product_size}', [AdminController::class, 'products_activate'])->name('products.activate');
+            Route::get('deactivate/{product_name}/{product_size}', [AdminController::class, 'products_deactivate'])->name('products.deactivate');
+            Route::get('delete/{product_name}/{product_size}', [AdminController::class, 'products_delete'])->name('products.delete');
+            Route::get('reactivate/{product_name}/{product_size}', [AdminController::class, 'product_reactivate'])->name('products.reactivate');
         });
 
         Route::prefix('category')->group(function () {
@@ -83,7 +88,6 @@ Route::prefix('admin')->group(function () {
         });
 
         Route::prefix('sizes')->group(function () {
-
             Route::get('available', [AdminController::class, 'sizes_available'])->name('sizes.available');
             Route::get('add', [AdminController::class, 'sizes_add'])->name('sizes.add');
             Route::post('store', [AdminController::class, 'sizes_store'])->name('sizes.store');
