@@ -33,16 +33,16 @@ Route::prefix('admin')->group(function () {
 
         Route::prefix('products')->group(function () {
             Route::get('avialable_products', [AdminController::class, 'products'])->name('products.available');
-            Route::get('edit/{product_name}/{product_size}/{product_for}', [AdminController::class, 'products_edit'])->name('products.edit');
+            Route::get('edit/{product_id}', [AdminController::class, 'products_edit'])->name('products.edit');
             Route::post('update', [AdminController::class, 'products_update'])->name('products.update');
             Route::get('add_product', [AdminController::class, 'products_add'])->name('products.add');
             Route::post('product_store', [AdminController::class, 'product_store'])->name('products.store');
             Route::get('purchased_products', [AdminController::class, 'products_purchase'])->name('products.purchase');
-            Route::get('delete/{product_name}/{product_size}/{product_for}', [AdminController::class, 'products_delete'])->name('products.delete');
-            Route::get('activate/{product_name}/{product_size}/{product_for}', [AdminController::class, 'products_activate'])->name('products.activate');
-            Route::get('deactivate/{product_name}/{product_size}/{product_for}', [AdminController::class, 'products_deactivate'])->name('products.deactivate');
-            Route::get('delete/{product_name}/{product_size}/{product_for}', [AdminController::class, 'products_delete'])->name('products.delete');
-            Route::get('reactivate/{product_name}/{product_size}/{product_for}', [AdminController::class, 'product_reactivate'])->name('products.reactivate');
+            Route::get('delete/{product_id}', [AdminController::class, 'products_delete'])->name('products.delete');
+            Route::get('activate/{product_id}', [AdminController::class, 'products_activate'])->name('products.activate');
+            Route::get('deactivate/{product_id}', [AdminController::class, 'products_deactivate'])->name('products.deactivate');
+            Route::get('delete/{product_id}', [AdminController::class, 'products_delete'])->name('products.delete');
+            Route::get('reactivate/{product_id}', [AdminController::class, 'product_reactivate'])->name('products.reactivate');
         });
 
         Route::prefix('category')->group(function () {
