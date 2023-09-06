@@ -12,14 +12,16 @@
         <div class="row">
             <!-- Image Column -->
             <div class="mt-4 col-lg-4 col-md-4 col-sm-12">
-                <img src="{{ asset('images/products/' . $products_data->Product_image) }}" alt="Product Image" class="img-fluid">
+                <img src="{{ asset('images/products/' . $products_data->Product_image) }}" alt="Product Image"
+                    class="img-fluid">
             </div>
 
             <!-- Form Column -->
             <div class="mt-4 col-lg-8 col-md-8 col-sm-12">
                 <label for="" class="form-label">Product name</label>
                 <input type="text" name="product_name" id="" class="form-control"
-                    placeholder="Enter Product name" value="{{ $products_data->Product_name }}" readonly>
+                    placeholder="Enter Product name" value="{{ $products_data->Product_name }}">
+                <input type="hidden" name="product_id" value="{{ $products_data->Product_id }}">
                 <span class="text-danger">
                     @error('product_name')
                         {{ $message }}
@@ -64,7 +66,7 @@
                 <label for="" class="form-label mt-4">Choose Product Size</label>
                 <select name="product_size" class="form-control form-select" id="">
                     <option value="{{ $products_data->Product_size }}">{{ $products_data->Product_size }}</option>
-                    @foreach($product_sizes as $products)
+                    @foreach ($product_sizes as $products)
                         <option value="{{ $products->size_name }}">{{ $products->size_name }}</option>
                     @endforeach
                 </select>

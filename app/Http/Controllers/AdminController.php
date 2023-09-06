@@ -40,12 +40,13 @@ class AdminController extends Controller
         return view('pages.products', compact('admin_data', 'getProductsRecord'));
     }
 
-    public function products_edit(string $product_name, string $product_size)
+    public function products_edit(string $product_name, string $product_size, string $product_for)
     {
         $admin_data = $this->setdata();
         $products_data = DB::table('products')
             ->where('Product_name', $product_name)
             ->where('Product_size', $product_size)
+            ->where('Product_for', $product_for)
             ->first();
 
         if ($products_data) {
@@ -59,7 +60,7 @@ class AdminController extends Controller
 
             return view('pages.edit_products', compact('admin_data', 'products_data', 'product_category_data', 'genders', 'product_sizes'));
         } else {
-            session()->flash('Error', "Product $product_name not found");
+            session()->flash('Error', "Product $product_name with size $product_size for $product_for not found");
             return redirect()->route('products.available');
         }
     }
@@ -74,6 +75,36 @@ class AdminController extends Controller
             'product_size' => 'required|alpha',
             'product_image' => 'mimes:jpg,png',
         ]);
+
+        $recordExists = DB::table('products')
+            ->where('Product_id', $request->product_id)
+            ->first();
+        if ($recordExists) {
+            if ($request->has('product_image')) {
+                $filePath = "images/products/$request->product_image";
+                if (File::exists($filePath)) {
+                    File::delete($filePath);
+                }
+                $fileOriginalName = $request->file('product_image')->getClientOriginalName();
+                $update = DB::table('products')
+                    ->where('Product_id', $request->product_id)
+                    ->update(['Product_name' => $request->product_name, 'Product_price' => $request->product_price, 'Product_category' => $request->product_category, 'Product_for' => $request->product_for, 'Product_size' => $request->product_size, 'Product_image' => $fileOriginalName]);
+
+                if ($update) {
+                    $request->product_image->move(public_path('images/products/'), $fileOriginalName);
+                    session()->flash('Success', 'Product updated successfully');
+                } else {
+                    session()->flash('Error', 'Error in updating the product');
+                }
+            } else {
+                $update = DB::table('products')
+                    ->where('Product_id', $request->product_id)
+                    ->update(['Product_name' => $request->product_name, 'Product_price' => $request->product_price, 'Product_category' => $request->product_category, 'Product_for' => $request->product_for, 'Product_size' => $request->product_size]);
+
+                $update ? session()->flash('Success', 'Product updated successfully') : session()->flash('Error', 'Error in updating Product');
+            }
+        }
+        return redirect()->route('products.available');
     }
     public function products_add()
     {
@@ -140,51 +171,57 @@ class AdminController extends Controller
         return view('pages.purchased_products', compact('admin_data'));
     }
 
-    public function products_deactivate(string $product_name, string $product_size)
+    public function products_deactivate(string $product_name, string $product_size, string $product_for)
     {
         $productIfExists = DB::table('products')
             ->where('Product_name', $product_name)
             ->where('Product_size', $product_size)
             ->where('Product_status', 'Active')
+            ->where('Product_for', $product_for)
             ->first();
         if ($productIfExists) {
             $productDeactivateQuery = DB::table('products')
                 ->where('Product_name', $product_name)
                 ->where('Product_size', $product_size)
                 ->where('Product_status', 'Active')
+                ->where('Product_for', $product_for)
+
                 ->update(['Product_status' => 'Inactive']);
             $productDeactivateQuery ? session()->flash('Success', 'Product status updated successfully') : session()->flash('Error', 'Error in updating Product Status');
         } else {
-            session()->flash('Error', "Product $product_name with size $product_size not found");
+            session()->flash('Error', "Product $product_name with size $product_size for $product_for not found");
         }
         return redirect()->route('products.available');
     }
 
-    public function products_activate(string $product_name, string $product_size)
+    public function products_activate(string $product_name, string $product_size, string $product_for)
     {
         $productIfExists = DB::table('products')
             ->where('Product_name', $product_name)
             ->where('Product_size', $product_size)
             ->where('Product_status', 'Inactive')
+            ->where('Product_for', $product_for)
             ->first();
         if ($productIfExists) {
             $productDeactivateQuery = DB::table('products')
                 ->where('Product_name', $product_name)
                 ->where('Product_size', $product_size)
                 ->where('Product_status', 'Inactive')
+                ->where('Product_for', $product_for)
                 ->update(['Product_status' => 'Active']);
             $productDeactivateQuery ? session()->flash('Success', 'Product status updated successfully') : session()->flash('Error', 'Error in updating Product Status');
         } else {
-            session()->flash('Error', "Product $product_name with size $product_size not found");
+            session()->flash('Error', "Product $product_name with size $product_size for $product_for not found");
         }
         return redirect()->route('products.available');
     }
 
-    public function products_delete(string $product_name, string $product_size)
+    public function products_delete(string $product_name, string $product_size, string $product_for)
     {
         $productIfExists = DB::table('products')
             ->where('Product_name', $product_name)
             ->where('Product_size', $product_size)
+            ->where('Product_for', $product_for)
             ->first();
         if ($productIfExists) {
             $productDeactivateQuery = DB::table('products')
@@ -193,27 +230,29 @@ class AdminController extends Controller
                 ->update(['Product_status' => 'Deleted']);
             $productDeactivateQuery ? session()->flash('Success', 'Product status updated successfully') : session()->flash('Error', 'Error in updating Product Status');
         } else {
-            session()->flash('Error', "Product $product_name with size $product_size not found");
+            session()->flash('Error', "Product $product_name with size $product_size for $product_for not found");
         }
         return redirect()->route('products.available');
     }
 
-    public function product_reactivate(string $product_name, string $product_size)
+    public function product_reactivate(string $product_name, string $product_size, string $product_for)
     {
         $productIfExists = DB::table('products')
             ->where('Product_name', $product_name)
             ->where('Product_size', $product_size)
             ->where('Product_status', 'Deleted')
+            ->where('Product_for', $product_for)
             ->first();
         if ($productIfExists) {
             $productDeactivateQuery = DB::table('products')
                 ->where('Product_name', $product_name)
                 ->where('Product_size', $product_size)
                 ->where('Product_status', 'Deleted')
+                ->where('Product_for', $product_for)
                 ->update(['Product_status' => 'Active']);
             $productDeactivateQuery ? session()->flash('Success', 'Product status updated successfully') : session()->flash('Error', 'Error in updating Product Status');
         } else {
-            session()->flash('Error', "Product $product_name with size $product_size not found");
+            session()->flash('Error', "Product $product_name with size $product_size for $product_for not found");
         }
         return redirect()->route('products.available');
     }
