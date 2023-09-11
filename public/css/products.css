@@ -62,6 +62,7 @@
 .joggers,
 .jeans {
   display: grid;
+  place-items: center;
   grid-template-columns: repeat(4, 1fr);
   grid-gap: 20px;
   padding-left: 50px;

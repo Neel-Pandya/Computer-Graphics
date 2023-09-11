@@ -3,17 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
     //
     public function guest_create()
     {
+
         return view('guest.index');
     }
     public function guest_products()
     {
-        return view('guest.products');
+        $productData = DB::table('products')->where('Product_status', 'Active')->get();
+        return view('guest.products', compact('productData'));
     }
     public function guest_categories()
     {
@@ -75,7 +78,7 @@ class UserController extends Controller
     public function login_validate(Request $request){
         $request->validate([
                 'customer_email' => 'required|email',
-                'customer_password' => 'required', 
+                'customer_password' => 'required',
         ],[
             'customer_email.required' => 'email field is required',
             'customer_password.required' => 'Password field is required',
