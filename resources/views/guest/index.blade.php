@@ -1,8 +1,7 @@
 @extends('guest.master')
 @section('titles')
-
-Home 
-@endsection 
+Home
+@endsection
 
 @section('content')
 
