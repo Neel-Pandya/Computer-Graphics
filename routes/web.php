@@ -15,6 +15,7 @@ use App\Http\Controllers\UserController;
 |
 */
 
+
 Route::prefix('admin')->group(function () {
     Route::view('login', 'pages.admin_login')
         ->name('admin.login')
@@ -102,11 +103,12 @@ Route::prefix('admin')->group(function () {
 Route::prefix('guest_user')->group(function () {
     Route::get('index', [UserController::class, 'guest_create'])->name('guest.create');
     Route::get('products', [UserController::class, 'guest_products'])->name('guest.products');
-    Route::get('categories', [UserController::class, 'guest_categosries'])->name('guest.category');
+    Route::get('categories', [UserController::class, 'guest_categories'])->name('guest.category');
     Route::get('contact', [UserController::class, 'guest_contact'])->name('guest.contact');
     Route::get('login', [UserController::class, 'guest_login'])->name('guest.login');
     Route::get('register', [UserController::class, 'guest_register'])->name('guest.register');
     Route::post('confirm_register', [UserController::class, 'guest_register_validate'])->name('guest.confirm.register');
     Route::post('send_contact', [UserController::class, 'guest_contact_validate'])->name('guest.confirm.contact');
     Route::post('login_validate', [UserController::class, 'login_validate'])->name('guest.login.validate');
+    Route::get('activate/{email}/{token}', [UserController::class, 'activate_account'])->name('guest.account.activate');
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -10,9 +11,10 @@ class AdminController extends Controller
 {
     public $admin_data;
 
-    public function setdata()
+    public function setData()
     {
-        return $this->admin_data = DB::table('admin')->get();
+        $this->admin_data = DB::table('admin')->get();
+        return $this->admin_data;
     }
 
     //
@@ -105,6 +107,7 @@ class AdminController extends Controller
         }
         return redirect()->route('products.available');
     }
+
     public function products_add()
     {
         $admin_data = $this->setdata();
@@ -163,6 +166,7 @@ class AdminController extends Controller
 
         return redirect()->route('products.available');
     }
+
     public function products_purchase()
     {
         $admin_data = $this->setdata();
@@ -175,7 +179,6 @@ class AdminController extends Controller
         $productIfExists = DB::table('products')
             ->where('Product_id', $product_id)
             ->where('Product_status', 'Active')
-
             ->first();
         if ($productIfExists) {
             $productDeactivateQuery = DB::table('products')
@@ -211,7 +214,6 @@ class AdminController extends Controller
     {
         $productIfExists = DB::table('products')
             ->where('Product_id', $product_id)
-
             ->first();
         if ($productIfExists) {
             $productDeactivateQuery = DB::table('products')
@@ -241,18 +243,21 @@ class AdminController extends Controller
         }
         return redirect()->route('products.available');
     }
+
     public function category_create()
     {
         $admin_data = $this->setdata();
         $category_data = DB::table('categories')->paginate(3);
         return view('pages.category_available', compact('admin_data', 'category_data'));
     }
+
     public function category_add()
     {
         $admin_data = $this->setdata();
 
         return view('pages.category_add', compact('admin_data'));
     }
+
     public function category_store(Request $request)
     {
         $request->validate([
@@ -274,18 +279,21 @@ class AdminController extends Controller
 
         return view('pages.category_edit', compact('admin_data'));
     }
+
     public function category_update(Request $request)
     {
         $request->validate([
             'category_name' => 'required',
         ]);
     }
+
     public function customer_create()
     {
         $admin_data = $this->setdata();
 
         return view('pages.customer_details', compact('admin_data'));
     }
+
     public function customer_add()
     {
         $admin_data = $this->setdata();
@@ -303,12 +311,14 @@ class AdminController extends Controller
             'customer_profile' => 'required|mimes:jpg,png',
         ]);
     }
+
     public function customer_edit()
     {
         $admin_data = $this->setdata();
 
         return view('pages.customer_edit', compact('admin_data'));
     }
+
     public function admin_edit()
     {
         $admin_data = $this->setdata();
@@ -316,7 +326,7 @@ class AdminController extends Controller
         return view('pages.admin_edit', compact('admin_data'));
     }
 
-    public function admin_update(Request $request)
+    public function admin_update(Request $request): \Illuminate\Http\RedirectResponse
     {
         $request->validate([
             'admin_name' => 'required',
@@ -353,6 +363,7 @@ class AdminController extends Controller
 
         return view('pages.change_password', compact('admin_data'));
     }
+
     public function update_password(Request $request)
     {
         $request->validate([
@@ -372,24 +383,28 @@ class AdminController extends Controller
             return redirect()->route('admin.change.password');
         }
     }
+
     public function shoes()
     {
         $admin_data = $this->setdata();
 
         return view('pages.shoes', compact('admin_data'));
     }
+
     public function jeans()
     {
         $admin_data = $this->setdata();
 
         return view('pages.jeans', compact('admin_data'));
     }
+
     public function hoodie()
     {
         $admin_data = $this->setdata();
 
         return view('pages.hoodie', compact('admin_data'));
     }
+
     public function shirt()
     {
         $admin_data = $this->setdata();
@@ -410,6 +425,7 @@ class AdminController extends Controller
 
         return view('pages.products_male', compact('admin_data'));
     }
+
     public function rate()
     {
         $admin_data = $this->setdata();
@@ -443,18 +459,21 @@ class AdminController extends Controller
 
         return view('pages.coupen', compact('admin_data'));
     }
+
     public function coupen_add()
     {
         $admin_data = $this->setdata();
 
         return view('pages.coupen_add', compact('admin_data'));
     }
+
     public function coupen_used()
     {
         $admin_data = $this->setdata();
 
         return view('pages.coupen_store', compact('admin_data'));
     }
+
     public function coupen_store(Request $request)
     {
         $request->validate([
@@ -464,6 +483,7 @@ class AdminController extends Controller
             'coupen_discount' => 'required',
         ]);
     }
+
     public function coupen_edit()
     {
         $admin_data = $this->setdata();
@@ -493,6 +513,7 @@ class AdminController extends Controller
 
         return view('users.user_login', compact('admin_data'));
     }
+
     public function user_store(Request $request)
     {
         $request->validate([
@@ -500,12 +521,15 @@ class AdminController extends Controller
             'password' => 'required',
         ]);
     }
+
+
     public function user_register()
     {
         $admin_data = $this->setdata();
 
         return view('users.user_register', compact('admin_data'));
     }
+
     public function user_register_validate(Request $request)
     {
         $request->validate([
@@ -598,6 +622,7 @@ class AdminController extends Controller
         }
         return redirect()->route('sizes.available');
     }
+
     public function delete_sizes(string $size_name)
     {
         $check = DB::table('sizes')
