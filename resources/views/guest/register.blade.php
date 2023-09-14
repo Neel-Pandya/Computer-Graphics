@@ -81,6 +81,14 @@
                             @enderror
                         </span>
                     </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-mt-4">
+                        <input type="file" name="pic" id="">
+                        <span class="text-danger">
+                            @error('pic')
+                                {{ $message }}
+                            @enderror
+                        </span>
+                    </div>
 
 
                     <input type="submit" class="button" value="Register">
