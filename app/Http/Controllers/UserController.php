@@ -157,6 +157,14 @@ class UserController extends Controller
                 'customer_email.email' => 'Email field must be type of email',
             ],
         );
+        $count = DB::table('customer_registration')->where('customer_email',$request->customer_email)->where('customer_password', $request->customer_password)->count();
+        if($count == 1){
+            $userData = DB::table('customer_registration')->where('customer_email', $request->customer_email)->where('customer_password', $request->customer_password)->get();
+            
+        }
+        else{
+            echo "not found";
+        }
     }
 
     public function activate_account($email, $token, Request $request)
