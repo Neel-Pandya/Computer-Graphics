@@ -142,3 +142,38 @@
 img {
   cursor: pointer;
 }
+
+@media screen and (max-width: 974px) {
+
+  .kurti,
+  .western,
+  .heels,
+  .g-shoes,
+  .shirts,
+  .shoes,
+  .joggers,
+  .jeans {
+    grid-template-columns: repeat(2, 1fr);
+    /* 2 images per row for md */
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+/* Add a media query for sm resolution */
+@media screen and (max-width: 767px) {
+
+  .kurti,
+  .western,
+  .heels,
+  .g-shoes,
+  .shirts,
+  .shoes,
+  .joggers,
+  .jeans {
+    grid-template-columns: repeat(1, 1fr);
+    /* 1 image per row for sm */
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}

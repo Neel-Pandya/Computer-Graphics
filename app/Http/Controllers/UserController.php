@@ -23,11 +23,17 @@ class UserController extends Controller
     }
     public function guest_products()
     {
-        $allProductData = DB::table('products')
+        $productForMale = DB::table('products')
             ->where('Product_status', 'Active')
+            ->where('Product_for', 'Male')
             ->get();
 
-        return view('guest.products', compact('allProductData'));
+        $productForFemale = DB::table('products')
+            ->where('Product_status', 'Active')
+            ->where('Product_for', 'Female')
+            ->get();
+
+        return view('guest.products', compact('productForMale', 'productForFemale'));
     }
     public function guest_categories()
     {
@@ -156,13 +162,14 @@ class UserController extends Controller
     public function activate_account($email, $token, Request $request)
     {
         $sessionToken = $request->session()->get('token');
-        $ifUserExists = DB::table('customer_registration')->where('customer_email', $email)->where('customer_status', 'Inactive')->first();
-
-        if ($token === $sessionToken && $ifUserExists) {
+        $ifUserExists = DB::table('customer_registration')
+            ->where('customer_email', $email)
+            ->where('customer_status', 'Inactive')
+            ->first();
+        if ($token === $sessionToken) {
             $updateStatus = DB::table('customer_registration')
                 ->where('customer_email', $email)
                 ->update(['customer_status' => 'Active']);
-
             if ($updateStatus) {
                 session()->flash('Success', 'Account Activated Successfully');
                 return redirect()->route('guest.login');
@@ -171,7 +178,7 @@ class UserController extends Controller
                 return redirect()->route('guest.login');
             }
         } else {
-            session()->flash('Error', "Error In activating the account");
+            session()->flash('Error', 'Error In activating the account');
             return redirect()->route('guest.login');
         }
     }

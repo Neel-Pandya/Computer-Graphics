@@ -28,6 +28,7 @@
 
     @yield('content')
 
+    @include('guest.user_foot')
 
 
 

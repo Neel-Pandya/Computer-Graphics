@@ -1,6 +1,6 @@
 <div class="footer-container">
     <div class="footer-1">
-        <a href="index.html">
+        <a href="{{ route('guest.create') }}">
             <h2>MERLIN FASHION🦋</h2>
         </a>
         <br>
