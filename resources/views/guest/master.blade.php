@@ -35,6 +35,9 @@
 
     <script type="text/javascript" src="{{ URL::to('/') }}/js/nav.js"></script>
     <script type="text/javascript" src="{{ asset('js/products.js') }}""></script>
+
+    <script src="{{ asset('js/jquery.js') }}"></script>
+   
     @stack('scripts')
 
 </body>

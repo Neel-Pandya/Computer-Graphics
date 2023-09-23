@@ -4,18 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
-
 Route::prefix('admin')->group(function () {
     Route::view('login', 'pages.admin_login')
         ->name('admin.login')
@@ -86,6 +74,9 @@ Route::prefix('admin')->group(function () {
             Route::get('edit', [AdminController::class, 'coupen_edit'])->name('coupen.edit');
             Route::post('update', [AdminController::class, 'coupen_update'])->name('coupen.update');
             Route::get('used_coupen', [AdminController::class, 'coupen_use'])->name('coupen.use');
+            Route::get('load_coupen', [AdminController::class, 'coupen_load'])->name('coupen.load');
+            Route::get('edit-coupens/{id}', [AdminController::class, 'getSelectedCoupen'])->name('coupens.edit');
+            Route::get('delete-coupen/{id}', [AdminController::class, 'deleteCoupen'])->name('coupen.delete');
         });
 
         Route::prefix('sizes')->group(function () {

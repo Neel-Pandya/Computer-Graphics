@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
@@ -476,28 +477,67 @@ class AdminController extends Controller
 
     public function coupen_store(Request $request)
     {
-        $request->validate([
-            'coupen_name' => 'required',
-            'coupen_price' => 'required|numeric',
-            'coupen_expire_date' => 'required',
-            'coupen_discount' => 'required',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:coupens,coupen_name',
+            'discount' => 'required',
+            'quantity' => 'required',
+            'expire' => 'required',
         ]);
+        if ($validator->fails())
+            return response()->json(['status' => 120, 'data' => $validator->messages()]);
+
+        $prefixCoupen = "MERLIN-";
+        $coupenAdd = DB::table('coupens')->insertOrIgnore([
+            'coupen_name' => $prefixCoupen . $request->name,
+            'discount' => $request->discount,
+            'Quantity' => $request->quantity,
+            'expire_date' => $request->expire,
+            'created_at' => now(),
+            'updated_at' => now(),
+
+        ]);
+        return $coupenAdd ? response()->json(['status' => 200, 'message' => 'coupen added successfully']) : response()->json(['status' => 404, 'message' => 'error in inserting coupen']);
     }
 
+    public function coupen_load()
+    {
+        $coupen = DB::table('coupens')->get();
+        return response()->json(['data' => $coupen]);
+    }
     public function coupen_edit()
     {
         $admin_data = $this->setdata();
 
         return view('pages.coupen_edit', compact('admin_data'));
     }
+    public function getSelectedCoupen($id)
+    {
+        $coupens = DB::table('coupens')->find($id);
+
+        return response()->json(['coupens' => $coupens]);
+    }
+    public function deleteCoupen($id)
+    {
+        $delete = DB::table('coupens')->delete($id);
+        return $delete ? response()->json(['status' => 200]) : response()->json(['status' => 400]);
+    }
 
     public function coupen_update(Request $request)
     {
-        $request->validate([
-            'coupen_price' => 'required|numeric',
-            'coupen_expire_date' => 'required',
-            'coupen_discount' => 'required',
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'quantity' => 'required',
+            'discount' => 'required',
+            'expire' => 'required'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status' => 402, 'errors' => $validator->messages()]);
+        }
+        $query = DB::table('coupens')->where('id', $request->id)->update(['coupen_name' => $request->name, 'Quantity' => $request->quantity, 'discount' => $request->discount, 'expire_date' => $request->expire]);
+
+        return $query ? response()->json(['status' => 102, 'message' => 'coupen updated successfully']) : response()->json(['status' => 404, 'message' => 'Error in updating Coupen']);
     }
 
     public function coupen_use()

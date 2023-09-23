@@ -13,7 +13,7 @@ Coupen Add
     $array = array(); 
     for ($i=1; $i <= 100 ; $i++) { 
         # code...
-        if($i % 5 == 0){
+        if($i % 3 == 0){
         $array[$i] = $i . "%"; 
         }
 
