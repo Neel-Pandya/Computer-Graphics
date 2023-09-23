@@ -18,9 +18,8 @@ $(document).ready(function () {
                             <td> ${valueOfElement.expire_date} </td>
                             <td> ${valueOfElement.discount} </td>
                             <td> <button class='btn btn-info button-edit' value='${valueOfElement.id}'>Edit</button> </td>
-                            <td> <button class ='btn btn-danger button-delete' value='${valueOfElement.id}'> Delete </button></td> 
-                                
-                            </tr>`
+                            <td> <button class ='btn btn-danger button-delete' value='${valueOfElement.id}'> Delete </button></td>    
+                        </tr>`
                     )
                 });
             }
@@ -145,13 +144,14 @@ $(document).ready(function () {
                 }
                 if (response.status == 102) {
                     $("#editModal").modal('hide')
+                    $(".edit-error-message").html("")
                     $("#editModal").find('input').val("")
                     sweetAlert("success", response.message)
 
                     loadAllCoupens();
                 } else if (response.status == 404) {
                     $("#editModal").modal('hide')
-
+                    $(".edit-error-message").html("")
                     $("#editModal").find('input').val("")
                     sweetAlert("error", response.message)
                 }
