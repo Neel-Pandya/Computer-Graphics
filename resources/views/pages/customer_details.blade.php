@@ -28,6 +28,76 @@
 
 
     {{-- Edit Customers Modal --}}
+
+
+    <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <div class="row">
+                        <h3 class="modal-title fs-5 col-12 text-center" id="exampleModalLabel">Edit Customers</h3>
+
+                        <div class="col-lg-4 image-insert mt-4">
+
+                        </div>
+                        <form method="POST" enctype="multipart/form-data" id="editCustomer" class="col-lg-8">
+                            <div class="row">
+                                <div class="col-12">
+                                    <ul class="customer-edit-error-messages alert-danger"></ul>
+                                </div>
+                                <div class="col-lg-6 col-md-12 mt-4">
+                                    <label for="" class="form-label">Customer Name</label>
+                                    <input type="text" name="edit_customer_name" id="edit_customer_name"
+                                        class="form-control">
+                                </div>
+                                <div class="col-lg-6 col-md-12 mt-4">
+                                    <label for="" class="form-label">Customer Email</label>
+                                    <input type="email" id="edit_customer_email" name="customer_email"
+                                        class="form-control">
+                                </div>
+                                <div class="col-lg-6 col-md-12 mt-4">
+                                    <label for="" class="form-label">Customer Mobile</label>
+                                    <input type="tel" name="customer_mobile" id="edit_customer_mobile"
+                                        class="form-control">
+                                </div>
+
+                                <div class="col-lg-6 col-md-12 mt-4">
+                                    <label for="" class="form-label">Customer Password</label>
+                                    <input type="password" id="edit_customer_password" name="customer_password"
+                                        class="form-control">
+                                </div>
+
+                                <div class="col-lg-6 col-md-12 mt-4 mb-4">
+                                    <label for="" class="form-label">Choose Genders</label>
+                                    <select id="edit_customer_gender" name="customer_gender"
+                                        class="form-control form-select">
+                                        <option value="">Choose Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6 col-md-12 mt-4 mb-4">
+                                    <label for="" class="form-label">Choose profile picture</label>
+                                    <input type="file" name="customer_profile" id="edit_customer_profile"
+                                        class="form-control">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary edit-customer-button">Add</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    {{-- Add Customer Modal  --}}
     <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -56,7 +126,8 @@
 
                             <div class="col-lg-6 col-md-12 mt-4">
                                 <label for="" class="form-label">Customer Password</label>
-                                <input type="password" id="customer_password" name="customer_password" class="form-control">
+                                <input type="password" id="customer_password" name="customer_password"
+                                    class="form-control">
                             </div>
 
                             <div class="col-lg-6 col-md-12 mt-4">
@@ -69,75 +140,14 @@
                             </div>
                             <div class="col-lg-6 col-md-12 mt-4">
                                 <label for="" class="form-label">Choose profile picture</label>
-                                <input type="file" name="customer_profile" id="customer_profile" class="form-control">
+                                <input type="file" name="customer_profile" id="customer_profile"
+                                    class="form-control">
                             </div>
                         </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary add-customer-button">Add</button>
-                </div>
-                </form>
-
-            </div>
-        </div>
-    </div>
-
-
-    <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title fs-5 col-12 text-center" id="exampleModalLabel">Edit Customers</h3>
-
-                </div>
-                <div class="modal-body">
-                    <form method="POST" enctype="multipart/form-data" id="addCustomer">
-                        <div class="row">
-                            <div class="col-12">
-                                <ul class="customer-edit-error-messages alert-danger"></ul>
-                            </div>
-                            <div class="col-lg-6 col-md-12 mt-4">
-                                <label for="" class="form-label">Customer Name</label>
-                                <input type="text" name="edit_customer_name" id="edit_customer_name"
-                                    class="form-control">
-                            </div>
-                            <div class="col-lg-6 col-md-12 mt-4">
-                                <label for="" class="form-label">Customer Email</label>
-                                <input type="email" id="edit_customer_email" name="customer_email"
-                                    class="form-control">
-                            </div>
-                            <div class="col-lg-6 col-md-12 mt-4">
-                                <label for="" class="form-label">Customer Mobile</label>
-                                <input type="tel" name="customer_mobile" id="edit_customer_mobile"
-                                    class="form-control">
-                            </div>
-
-                            <div class="col-lg-6 col-md-12 mt-4">
-                                <label for="" class="form-label">Customer Password</label>
-                                <input type="password" id="edit_customer_password" name="customer_password"
-                                    class="form-control">
-                            </div>
-
-                            <div class="col-lg-6 col-md-12 mt-4">
-                                <label for="" class="form-label">Choose Genders</label>
-                                <select id="edit_customer_gender" name="customer_gender"
-                                    class="form-control form-select">
-                                    <option value="">Choose Gender</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                </select>
-                            </div>
-                            <div class="col-lg-6 col-md-12 mt-4">
-                                <label for="" class="form-label">Choose profile picture</label>
-                                <input type="file" name="customer_profile" id="edit_customer_profile"
-                                    class="form-control">
-                            </div>
-                        </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary edit-customer-button">Add</button>
                 </div>
                 </form>
 
@@ -357,6 +367,19 @@
                     success: function(response) {
                         if (response.status == 'success') {
                             $("#editCustomerModal").modal('show')
+                            $("#edit_customer_name").val(response.customers.customer_name)
+                            $("#edit_customer_email").val(response.customers.customer_email)
+                            $("#edit_customer_mobile").val(response.customers.customer_mobile)
+                            $("#edit_customer_password").val(response.customers
+                                .customer_password)
+                            $("#edit_customer_gender").val(response.customers.customer_gender)
+
+                            $(".edit-customer-button").text("Update")
+
+                            $(".image-insert").html(
+                                `<img src='{{ URL::to('/') }}/images/profiles/${response.customers.customer_profile}' class='img-fluid' style='width:100%;'>`
+                            )
+                            $(".edit-customer-button").text("Update")
 
                         } else if (response.status == 404) {
                             sweetAlert("error", response.message)

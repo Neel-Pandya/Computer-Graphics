@@ -1,6 +1,6 @@
-@extends('master')
+@extends('guest.master')
 
-@section('dynamic_1')
+@section('title')
     login page
 @endsection
 
@@ -77,7 +77,7 @@
 
                     <div class="forgetpasword">
                         <span class="forget">Forget Password
-                            <a href="{{ route('guest_user.forget_password_form') }}">forget</a>
+                            <a href="{{ route('forget.password') }}">forget</a>
                         </span>
                     </div>
 
