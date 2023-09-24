@@ -440,6 +440,40 @@ class AdminController extends Controller
         return $findCustomerById ? response()->json(['status' => 'success', 'customers' => $findCustomerById]) : response()->json(['status' => 404, 'message' => 'Id not found']);
     }
 
+    public function customer_update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'customer_name' => 'required',
+            'customer_mobile' => 'required|digits:10',
+            'customer_password' => 'required|min:8|max:16',
+            'customer_gender' => 'required',
+            'customer_profile' => 'mimes:jpg,png,avif,jpeg',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status' => 'validation_failed', 'errors' => $validator->messages()]);
+        }
+
+        if ($request->has('customer_profile')) {
+            $filePath = "images/profiles/" . $request->customer_profile;
+            if (File::exists($filePath))
+                File::delete($filePath);
+            $fileOriginalName = $request->file('customer_profile')->getClientOriginalName();
+
+            $update_query = DB::table('customer_registration')->where('id', $request->id)->update(['customer_name' => $request->customer_name, 'customer_mobile' => $request->customer_mobile, 'customer_password' => $request->customer_password, 'customer_gender' => $request->customer_gender, 'customer_profile' => $fileOriginalName]);
+            if ($update_query) {
+                $request->customer_profile->move("images/profiles/", $fileOriginalName);
+                return response()->json(['status' => 'success', 'message' => 'record updated successfully']);
+            } else {
+                return response()->json(['status' => 'failed', 'message' => 'error in record updating']);
+            }
+        } else {
+
+            $update_query = DB::table('customer_registration')->where('id', $request->id)->update(['customer_name' => $request->customer_name, 'customer_mobile' => $request->customer_mobile, 'customer_password' => $request->customer_password, 'customer_gender' => $request->customer_gender]);
+
+            return $update_query ? response()->json(['status' => 'success', 'message' => 'record updated successfully']) : response()->json(['status' => 'failed', 'message' => 'error in updating record']);
+        }
+    }
     public function admin_edit()
     {
         $admin_data = $this->setdata();
