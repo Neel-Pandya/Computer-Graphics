@@ -18,7 +18,7 @@ return new class extends Migration
 
             $table->id();
             $table->string('customer_name')->nullable(false);
-            $table->string('customer_email')->nullable(false);
+            $table->string('customer_email')->nullable(false)->unique();
             $table->string('customer_mobile')->nullable(false);
             $table->string('customer_password')->nullable(false);
             $table->enum('customer_gender', $genders);

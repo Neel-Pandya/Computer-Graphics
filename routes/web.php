@@ -54,8 +54,13 @@ Route::prefix('admin')->group(function () {
             Route::get('customer_details', [AdminController::class, 'customer_create'])->name('customers.details');
             Route::get('add', [AdminController::class, 'customer_add'])->name('customers.add');
             Route::post('customer_store', [AdminController::class, 'customer_store'])->name('customers.store');
-            Route::get('customer_edit', [AdminController::class, 'customer_edit'])->name('customer.edit');
+            Route::get('customer_edit/{id}', [AdminController::class, 'customer_edit'])->name('customer.edit');
             Route::post('customer_update', [AdminController::class, 'customer_update'])->name('customer.update');
+            Route::get('get-all-customers', [AdminController::class, 'getAllCustomer'])->name('customers.getAll');
+            Route::get('deactivate/{id}', [AdminController::class, 'deactivateCustomer'])->name('customers.deactivate');
+            Route::get('activate/{id}', [AdminController::class, 'activateCustomer'])->name('customers.activate');
+            Route::get('delete/{id}', [AdminController::class, 'deleteCustomer'])->name('customer.delete');
+            Route::get('reactivate/{id}', [AdminController::class, 'reactivateCustomer'])->name('customer.reactivate');
         });
 
         Route::prefix('gender')->group(function () {

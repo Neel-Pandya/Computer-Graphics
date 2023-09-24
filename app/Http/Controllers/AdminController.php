@@ -288,6 +288,76 @@ class AdminController extends Controller
         ]);
     }
 
+    public function getAllCustomer()
+    {
+        $customers = DB::table('customer_registration')->get();
+        return response()->json(['data' => $customers]);
+    }
+    public function deactivateCustomer($id)
+    {
+        $deactive = DB::table('customer_registration')
+            ->where('id', $id)
+            ->where('customer_status', 'Active')
+            ->first();
+        if ($deactive) {
+            $deleteQueryExec = DB::table('customer_registration')
+                ->where('id', $id)
+                ->where('customer_status', 'Active')
+                ->update(['customer_status' => 'Inactive']);
+            return $deleteQueryExec ? response()->json(['status' => 'success', 'message' => 'status updated successfully']) : response()->json(['status' => 'failed', 'message' => 'error in updating status']);
+        } else {
+            return response()->json(['status' => 'error', 'messege' => 'Error in updating Status']);
+        }
+    }
+
+    public function activateCustomer($id)
+    {
+        $active = DB::table('customer_registration')
+            ->where('id', $id)
+            ->where('customer_status', 'Inactive')
+            ->first();
+        if ($active) {
+            $deleteQueryExec = DB::table('customer_registration')
+                ->where('id', $id)
+                ->where('customer_status', 'Inactive')
+                ->update(['customer_status' => 'Active']);
+            return $deleteQueryExec ? response()->json(['status' => 'success', 'message' => 'status updated successfully']) : response()->json(['status' => 'failed', 'message' => 'error in updating status']);
+        } else {
+            return response()->json(['status' => 'error', 'messege' => 'Error in updating Status']);
+        }
+    }
+
+    public function deleteCustomer($id)
+    {
+        $find = DB::table('customer_registration')
+            ->where('id', $id)
+            ->first();
+        if ($find) {
+            $update = DB::table('customer_registration')
+                ->where('id', $id)
+                ->update(['customer_status' => 'Deleted']);
+            return $update ? response()->json(['status' => 'success', 'message' => 'customer deleted successfully']) : response()->json(['status' => 'failed', 'message' => 'error in deleting customer']);
+        } else {
+            return response()->json(['status' => 404, 'message' => 'id not found']);
+        }
+    }
+    public function reactivateCustomer($id)
+    {
+        $find = DB::table('customer_registration')
+            ->where('id', $id)
+            ->where('customer_status', 'Deleted')
+            ->first();
+        if ($find) {
+            $reactivate = DB::table('customer_registration')
+                ->where('id', $id)
+                ->where('customer_status', 'Deleted')
+                ->update(['customer_status' => 'Active']);
+            return $reactivate ? response()->json(['status' => 'success', 'message' => 'Customer Reactivated Successfully']) : response()->json(['status' => 'error', 'message' => 'Error in Reactivating the customer']);
+        } else {
+            return response()->json(['status' => 404, 'message' => 'id not found']);
+        }
+    }
+
     public function customer_create()
     {
         $admin_data = $this->setdata();
@@ -302,22 +372,72 @@ class AdminController extends Controller
         return view('pages.customer_add', compact('admin_data'));
     }
 
+
+    // Insert the customer if there is any profile picture or not 
     public function customer_store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'customer_name' => 'required',
-            'customer_email' => 'required|email',
+            'customer_email' => 'required|email|unique:customer_registration,customer_email',
+            'customer_mobile' => 'required|digits:10',
+            'customer_password' => 'required|min:8|max:16',
             'customer_gender' => 'required',
-            'customer_number' => 'required|numeric|digits:10',
-            'customer_profile' => 'required|mimes:jpg,png',
+            'customer_profile' => 'mimes:jpg,png,jpeg,avif',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status' => 'errors', 'error' => $validator->messages()]);
+        }
+
+        if ($request->customer_profile) {
+            $fileOriginalName = $request->file('customer_profile')->getClientOriginalName();
+
+            $filePath = 'images/profiles/' . $request->customer_profile;
+
+            if (File::exists($filePath)) {
+                File::delete($filePath);
+            }
+            $storeCustomer = DB::table('customer_registration')->insertOrIgnore([
+                'customer_name' => $request->customer_name,
+                'customer_email' => $request->customer_email,
+                'customer_mobile' => $request->customer_mobile,
+                'customer_password' => $request->customer_password,
+                'customer_gender' => $request->customer_gender,
+                'customer_profile' => $fileOriginalName,
+                'customer_status' => 'Active',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            if ($storeCustomer) {
+                $request->customer_profile->move('images/profiles', $fileOriginalName);
+                return response()->json(['status' => 'success', 'message' => 'Customer Added Successfully']);
+            } else {
+                return response()->json(['status' => 'failed', 'message' => 'Error in Customer Inserting']);
+            }
+        } else {
+            $storeCustomer = DB::table('customer_registration')->insertOrIgnore([
+                'customer_name' => $request->customer_name,
+                'customer_email' => $request->customer_email,
+                'customer_mobile' => $request->customer_mobile,
+                'customer_password' => $request->customer_password,
+                'customer_gender' => $request->customer_gender,
+                'customer_status' => 'Active',
+                'customer_profile' => 'default.jpg',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            if ($storeCustomer) {
+                return response()->json(['status' => 'success', 'message' => 'Customer Added Successfully']);
+            } else {
+                return response()->json(['status' => 'failed', 'message' => 'Error in Customer Inserting']);
+            }
+        }
     }
 
-    public function customer_edit()
+    public function customer_edit($id)
     {
-        $admin_data = $this->setdata();
-
-        return view('pages.customer_edit', compact('admin_data'));
+        $findCustomerById = DB::table('customer_registration')->find($id);
+        return $findCustomerById ? response()->json(['status' => 'success', 'customers' => $findCustomerById]) : response()->json(['status' => 404, 'message' => 'Id not found']);
     }
 
     public function admin_edit()
@@ -483,10 +603,11 @@ class AdminController extends Controller
             'quantity' => 'required',
             'expire' => 'required',
         ]);
-        if ($validator->fails())
+        if ($validator->fails()) {
             return response()->json(['status' => 120, 'data' => $validator->messages()]);
+        }
 
-        $prefixCoupen = "MERLIN-";
+        $prefixCoupen = 'MERLIN-';
         $coupenAdd = DB::table('coupens')->insertOrIgnore([
             'coupen_name' => $prefixCoupen . $request->name,
             'discount' => $request->discount,
@@ -494,7 +615,6 @@ class AdminController extends Controller
             'expire_date' => $request->expire,
             'created_at' => now(),
             'updated_at' => now(),
-
         ]);
         return $coupenAdd ? response()->json(['status' => 200, 'message' => 'coupen added successfully']) : response()->json(['status' => 404, 'message' => 'error in inserting coupen']);
     }
@@ -524,18 +644,19 @@ class AdminController extends Controller
 
     public function coupen_update(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'quantity' => 'required',
             'discount' => 'required',
-            'expire' => 'required'
+            'expire' => 'required',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['status' => 402, 'errors' => $validator->messages()]);
         }
-        $query = DB::table('coupens')->where('id', $request->id)->update(['coupen_name' => $request->name, 'Quantity' => $request->quantity, 'discount' => $request->discount, 'expire_date' => $request->expire]);
+        $query = DB::table('coupens')
+            ->where('id', $request->id)
+            ->update(['coupen_name' => $request->name, 'Quantity' => $request->quantity, 'discount' => $request->discount, 'expire_date' => $request->expire]);
 
         return $query ? response()->json(['status' => 102, 'message' => 'coupen updated successfully']) : response()->json(['status' => 404, 'message' => 'Error in updating Coupen']);
     }
@@ -561,7 +682,6 @@ class AdminController extends Controller
             'password' => 'required',
         ]);
     }
-
 
     public function user_register()
     {
