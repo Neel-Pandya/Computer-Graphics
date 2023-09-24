@@ -1,0 +1,43 @@
+{{-- <div class="footer-container">
+    <div class="footer-1">
+        <a href="{{ route('guest.create') }}">
+            <h2>MERLIN FASHION🦋</h2>
+        </a>
+        <br>
+        <p><b>ONLINE SHOPPING</b></p>
+        <h6>
+            Men<br><br>
+            Women <br><br>
+            Kids <br><br>
+            Merline Exclusive<br><br>
+        </h6>
+    </div>
+
+    <div class="footer-2">
+        <p><b>USEFUL LINKS</b></p>
+        <h6>
+            Contact Us<br><br>
+            FAQ<br><br>
+            T&C<br><br>
+            Blog<br><br>
+            Privacy Policy<br><br>
+        </h6>
+    </div>
+
+    <div class="footer-3">
+        <p><b>100% Original</b> guarantee</p>
+        <h6>
+            for all products at merlinfashion.com
+        </h6>
+        <p><b>Return within 30days</b> of</p>
+        <h6>
+            receiving you order
+        </h6>
+        <p><b>Get free delivery</b> for every</p>
+        <h6>
+            order above Rs.999
+        </h6>
+        <br><br>
+    </div>
+
+</div> --}}
