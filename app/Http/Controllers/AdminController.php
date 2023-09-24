@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -27,19 +28,15 @@ class AdminController extends Controller
     public function products(Request $request)
     {
         $admin_data = $this->setdata();
-        if ($request->input('search')) {
-            $getProductsRecord = DB::table('products')
-                ->where('Product_category', 'like', '%' . $request->search . '%')
-                ->orWhere('Product_for', $request->search)
-                ->orWhere('Product_price', 'like', '%' . $request->search . '%')
-                ->orWhere('Product_size', $request->search)
-                ->orWhere('Product_status', 'like', '%' . $request->search . '%')
-                ->paginate(4);
-        } else {
-            $getProductsRecord = DB::table('products')->paginate(4);
-        }
+        return view('pages.products', compact('admin_data'));
+    }
+    public function getRequiredData()
+    {
+        $categoryData = DB::table('categories')->where('status', 'Active')->get();
+        $sizeData = DB::table('sizes')->where('status', 'Active')->get();
+        $productsAllData = DB::table('products')->get();
 
-        return view('pages.products', compact('admin_data', 'getProductsRecord'));
+        return response()->json(['categoryData' => $categoryData, 'sizeData' => $sizeData, 'products' => $productsAllData]);
     }
 
     public function products_edit(string $product_id)
@@ -125,46 +122,48 @@ class AdminController extends Controller
 
     public function product_store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'product_name' => 'required',
-            'product_price' => 'required|numeric',
+            'product_price' => 'required|min:3|max:9',
             'product_category' => 'required',
             'product_for' => 'required',
             'product_size' => 'required',
-            'product_image' => 'required|mimes:jpg,png,jpeg,avif',
-        ]);
+            'product_image' => 'required|mimes:jpg,png,jpeg,avif'
+        ], []);
+        if ($validator->fails()) {
+            return response()->json(['status' => 'validation_error', 'message' => $validator->messages()]);
+        }
 
-        $productImageOriginalName = $request->file('product_image')->getClientOriginalName();
-        $existingProduct = DB::table('products')
-            ->where('Product_name', $request->product_name)
-            ->where('Product_size', $request->product_size)
-            ->first();
+        try {
+            $filePath = "images/products/" . $request->product_image;
+            if (File::exists($filePath))
+                File::delete($filePath);
 
-        if (!$existingProduct) {
-            // If no matching product is found, insert the new product
-            $insertProduct = DB::table('products')->insertOrIgnore([
+            $fileOriginalName = $request->file('product_image')->getClientOriginalName();
+
+            $productAdd = DB::table('products')->insertOrIgnore([
                 'Product_name' => $request->product_name,
                 'Product_price' => $request->product_price,
                 'Product_category' => $request->product_category,
                 'Product_for' => $request->product_for,
                 'Product_size' => $request->product_size,
-                'Product_image' => $productImageOriginalName,
-                'Product_status' => 'Active',
+                'Product_image' => $fileOriginalName,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'Product_status' => 'Active'
             ]);
 
-            if ($insertProduct) {
-                $request->product_image->move(public_path('images/products/'), $productImageOriginalName);
-                session()->flash('Success', 'Product added successfully');
+            if ($productAdd) {
+                $request->product_image->move("images/products", $fileOriginalName);
+                return response()->json(['status' => 'success', 'message' => 'Product Added successfully']);
             } else {
-                session()->flash('Error', 'Error in inserting the product');
+                return response()->json(['status' => 'failed', 'message' => 'Error in Inserting the product']);
             }
-        } else {
-            session()->flash('Error', 'A product with the same name and size already exists');
+        } catch (Exception $e) {
+            return response()->json(['status' => 'failed', 'message' => $e->getMessage()]);
         }
 
-        return redirect()->route('products.available');
+
     }
 
     public function products_purchase()

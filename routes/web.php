@@ -31,6 +31,7 @@ Route::prefix('admin')->group(function () {
             Route::get('activate/{product_id}', [AdminController::class, 'products_activate'])->name('products.activate');
             Route::get('deactivate/{product_id}', [AdminController::class, 'products_deactivate'])->name('products.deactivate');
             Route::get('delete/{product_id}', [AdminController::class, 'products_delete'])->name('products.delete');
+            Route::get('get-required-data', [AdminController::class, 'getRequiredData'])->name('products.get');
             Route::get('reactivate/{product_id}', [AdminController::class, 'product_reactivate'])->name('products.reactivate');
         });
 

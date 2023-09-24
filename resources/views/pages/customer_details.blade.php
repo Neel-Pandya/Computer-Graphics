@@ -191,8 +191,6 @@
                                 buttonLabel = "Reactivate";
                                 buttonClass = "btn btn-danger button-reactivate";
                             }
-
-                            valueOfElement.
                             // Showing the data in the table
                             $("tbody").append(
                                 `<tr>
