@@ -160,7 +160,7 @@ class UserController extends Controller
         $count = DB::table('customer_registration')->where('customer_email',$request->customer_email)->where('customer_password', $request->customer_password)->count();
         if($count == 1){
             $userData = DB::table('customer_registration')->where('customer_email', $request->customer_email)->where('customer_password', $request->customer_password)->get();
-            
+
         }
         else{
             echo "not found";
