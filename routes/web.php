@@ -107,7 +107,6 @@ Route::prefix('guest_user')->group(function () {
     Route::post('send_contact', [UserController::class, 'guest_contact_validate'])->name('guest.confirm.contact');
     Route::post('login_validate', [UserController::class, 'login_validate'])->name('guest.login.validate');
     Route::get('activate/{email}/{token}', [UserController::class, 'activate_account'])->name('guest.account.activate');
-
     Route::view('forget_password_form', 'guest.forget_password_form')->name('forget.password');
     Route::post('forget_password_form_submit', [BeforeLoginController::class, 'forget_password_form_submit']);
     Route::get('verify_forget_pwd_otp/{email}/{token}', [BeforeLoginController::class, 'verify_forget_pwd_otp']);

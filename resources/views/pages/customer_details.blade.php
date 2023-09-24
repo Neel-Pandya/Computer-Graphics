@@ -189,9 +189,10 @@ Customers Details
                             buttonClass = "btn btn-danger button-reactivate";
                         }
 
-                        // Showing the data in the table
-                        $("tbody").append(
-                            `<tr>
+                        valueOfElement.
+                            // Showing the data in the table
+                            $("tbody").append(
+                                `<tr>
                                 <td>${valueOfElement.id}</td>
                                 <td>${valueOfElement.customer_name}</td>
                                 <td>${valueOfElement.customer_email}</td>
@@ -202,7 +203,7 @@ Customers Details
                                 <td><button class='btn btn-primary button-edit' value='${valueOfElement.id}'>Edit</button></td>
                                 <td><button class='btn btn-danger button-delete' value='${valueOfElement.id}'>Delete</button></td>
                             </tr>`
-                        )
+                            )
                     });
                 }
             });
@@ -419,18 +420,18 @@ Customers Details
                     if (response.status == 'validation_failed') {
                         $('.customer-edit-error-messages').html("")
                         $.each(response.errors, function (indexInArray, valueOfElement) {
-                            $(".customer-edit-error-messages").append(`<li style='list-style:none;'> ${valueOfElement} </li>`);
+                            $(".customer-edit-error-messages").append(
+                                `<li style='list-style:none;'> ${valueOfElement} </li>`
+                            );
                         });
-                    }
-                    else {
+                    } else {
                         $(".customer-edit-error-messages").html("")
                     }
                     if (response.status == 'success') {
                         $("#editCustomerModal").modal('hide')
                         sweetAlert('success', response.message);
                         loadAllUsers()
-                    }
-                    else if (response.status == 'failed') {
+                    } else if (response.status == 'failed') {
                         $("#editCustomerModal").modal('hide')
                         sweetAlert('error', response.message)
                     }
