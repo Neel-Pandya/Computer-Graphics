@@ -193,7 +193,8 @@
                             }
                             // Showing the data in the table
                             $("tbody").append(
-                                `<tr>
+                                `
+                            <tr>
                                 <td>${valueOfElement.id}</td>
                                 <td>${valueOfElement.customer_name}</td>
                                 <td>${valueOfElement.customer_email}</td>
