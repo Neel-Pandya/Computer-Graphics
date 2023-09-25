@@ -268,17 +268,16 @@
 
 
                 // For deleting the product by id
-                $(document).on('click','.button-delete', function () {
+                $(document).on('click', '.button-delete', function() {
                     let valueOfButton = $(this).val()
                     $.ajax({
                         type: "GET",
                         url: `delete/${valueOfButton}`,
-                        success: function (response) {
-                            if(response.status == 'success'){
+                        success: function(response) {
+                            if (response.status == 'success') {
                                 sweetAlert("success", response.message)
                                 getRequiredData()
-                            }
-                            else if(response.status == 'failed'){
+                            } else if (response.status == 'failed') {
                                 sweetAlert('error', response.message);
                             }
                         }
