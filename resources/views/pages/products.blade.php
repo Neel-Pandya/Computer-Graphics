@@ -91,6 +91,74 @@
                 </div>
             </div>
 
+            {{-- Edit Product Modal --}}
+                <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title fs-5 " id="exampleModalLabel">Edit Product</h3>
+                            {{-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> --}}
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+
+                                <div class="col-lg-4 col-md-4 col-sm-12 prodcut-image">
+
+                                </div>
+                            <form method="POST" id="editProductsForm" enctype="multipart/form-data" class="col-lg-8 col-md-8 col-sm-12">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <ul class="add-product-errors alert-danger"></ul>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12 mt-4">
+                                        <label for="" class="form-label">Product Name</label>
+                                        <input type="text" id="edit_product_name" class="form-control">
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12 mt-4">
+                                        <label for="" class="form-label">Product Price</label>
+                                        <input type="number" id="edit_product_price" class="form-control">
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12 mt-4">
+                                        <label for="" class="form-label">Product category</label>
+                                        <select name="" id="edit_product_category" class="form-control form-select">
+                                            <option value="">Choose Category</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12 mt-4">
+                                        <label for="" class="form-label">Product For</label>
+                                        <select name="" id="edit_product_for" class="form-control">
+                                            <option value="">Choose Gender</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12 mt-4">
+                                        <label for="" class="form-label">Product size</label>
+                                        <select name="" id="edit_product_size" class="form-control">
+                                            <option value="">Choose size</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12 mt-4">
+                                        <label for="" class="form-label">Product image</label>
+                                        <input type="file" id="product_image" class="form-control">
+                                    </div>
+
+
+                                </div>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
         </div>
     @endsection
@@ -285,6 +353,25 @@
                 });
 
                 // TODO: edit the specific product by the id's
+
+                $(document).on('click','.button-edit', function () {
+                    let editButtonValue = $(this).val()
+                    $("#editProductModal").modal('show')
+
+                    $.ajax({
+                        type: "GET",
+                        url: `edit/${editButtonValue}`,
+                        success: function (response) {
+                            if(response.status == 'success'){
+                                console.log(response.category)
+                                console.log(response.size)
+                            }
+                            else if(response.status == 'failed'){
+                                sweetAlert('error', response.message)
+                            }
+                        }
+                    });
+                });
 
             });
         </script>

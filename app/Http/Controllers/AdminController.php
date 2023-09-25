@@ -45,24 +45,19 @@ class AdminController extends Controller
 
     public function products_edit(string $product_id)
     {
-        $admin_data = $this->setdata();
-        $products_data = DB::table('products')
-            ->where('Product_id', $product_id)
-            ->first();
-
-        if ($products_data) {
-            $product_category_data = DB::table('categories')
-                ->where('category_name', '<>', $products_data->Product_category)
-                ->get();
-            $genders = $products_data->Product_for == 'Male' ? 'Female' : 'Male';
-            $product_sizes = DB::table('sizes')
-                ->where('size_name', '<>', $products_data->Product_size)
-                ->get();
-
-            return view('pages.edit_products', compact('admin_data', 'products_data', 'product_category_data', 'genders', 'product_sizes'));
-        } else {
-            session()->flash('Error', "Product id $product_id not found");
-            return redirect()->route('products.available');
+        try {
+            $productFind = DB::table('products')
+                ->where('Product_id', $product_id)
+                ->first();
+            if ($productFind) {
+                $categoryFind = DB::table('categories')->where('category_name', '<>', $productFind->Product_category)->get();
+                $sizesFind = DB::table('sizes')->where('size_name', '<>', $productFind->Product_size)->get();
+                return response()->json(['status' => 'success', 'product' => $productFind, 'category' => $categoryFind, 'size' => $sizesFind]);
+            } else {
+                return response()->json(['status' => 'failed', 'message' => 'Product not found']);
+            }
+        } catch (Exception $e) {
+            return response()->json(['status' => 'failed', 'message' => $e->getmessage()]);
         }
     }
 
