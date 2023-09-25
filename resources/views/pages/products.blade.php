@@ -113,7 +113,7 @@
                         type: "GET",
                         url: "get-required-data",
                         success: function(response) {
-                            console.log(response.categoryData)
+
 
                             // it is for fetching the categories
                             $.each(response.categoryData, function(indexInArray, valueOfElement) {
@@ -131,8 +131,10 @@
 
                             // it is for fetching the products
                             $("tbody").html('')
+
+
                             $.each(response.products, function(indexInArray, valueOfElement) {
-                                
+
                                 if (valueOfElement.Product_status == 'Active') {
                                     buttonLabel = "Deactivate"
                                     buttonClass = "btn btn-danger button-deactivate"
@@ -152,9 +154,9 @@
                                         <td>${valueOfElement.Product_for}</td>
                                         <td>${valueOfElement.Product_size}</td>
                                         <td><img src='{{ URL::to('/') }}/images/products/${valueOfElement.Product_image}'></td>
-                                        <td><button class='${buttonClass}'>${buttonLabel}</button></td>
-                                        <td><button class='btn btn-primary button-edit'>Edit</button></td>
-                                        <td><button class='btn btn-danger button-delete'>Delete</button></td>
+                                        <td><button class='${buttonClass}' value='${valueOfElement.Product_id}'>${buttonLabel}</button></td>
+                                        <td><button class='btn btn-primary button-edit' value='${valueOfElement.Product_id}'>Edit</button></td>
+                                        <td><button class='btn btn-danger button-delete' value='${valueOfElement.Product_id}'>Delete</button></td>
                                     </tr>
                                         
                                 `)
@@ -167,6 +169,8 @@
                 // This is used to show required data like categories , sizes and all table data  
                 getRequiredData()
 
+
+                // Inserting the data
                 $(document).on('submit', '#addProductForm', function(event) {
                     event.preventDefault()
                     let formData = new FormData(this)
@@ -211,7 +215,7 @@
                                 $("#product_for").val("")
                                 $("#product_size").val("")
                                 $("#product_category").val("")
-                                
+
 
                             } else if (response.status == 'failed') {
                                 $("#addProductsModal").modal('hide')
@@ -223,7 +227,65 @@
                             }
                         }
                     });
+
+
                 });
+
+                // Deactivate the specific product by the id's
+                $(document).on('click', '.button-deactivate', function() {
+                    let buttonId = $(this).val()
+                    $.ajax({
+                        type: "GET",
+                        url: `deactivate/${buttonId}`,
+                        success: function(response) {
+                            if (response.status == 'success') {
+                                sweetAlert('success', response.message)
+                                getRequiredData()
+                            } else if (response.status == 'failed') {
+                                sweetAlert('error', response.message)
+                            }
+                        }
+                    });
+                });
+
+
+                // Activating specific product by id's 
+                $(document).on('click', '.button-activate', function() {
+                    let buttonId = $(this).val()
+                    $.ajax({
+                        type: "GET",
+                        url: `activate/${buttonId}`,
+                        success: function(response) {
+                            if (response.status == 'success') {
+                                sweetAlert('success', response.message)
+                                getRequiredData()
+                            } else if (response.status == 'failed') {
+                                sweetAlert('error', response.message)
+                            }
+                        }
+                    });
+                });
+
+
+                // For deleting the product by id
+                $(document).on('click','.button-delete', function () {
+                    let valueOfButton = $(this).val()
+                    $.ajax({
+                        type: "GET",
+                        url: `delete/${valueOfButton}`,
+                        success: function (response) {
+                            if(response.status == 'success'){
+                                sweetAlert("success", response.message)
+                                getRequiredData()
+                            }
+                            else if(response.status == 'failed'){
+                                sweetAlert('error', response.message);
+                            }
+                        }
+                    });
+                });
+
+                // TODO: edit the specific product by the id's
 
             });
         </script>

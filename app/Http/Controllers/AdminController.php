@@ -32,8 +32,12 @@ class AdminController extends Controller
     }
     public function getRequiredData()
     {
-        $categoryData = DB::table('categories')->where('status', 'Active')->get();
-        $sizeData = DB::table('sizes')->where('status', 'Active')->get();
+        $categoryData = DB::table('categories')
+            ->where('status', 'Active')
+            ->get();
+        $sizeData = DB::table('sizes')
+            ->where('status', 'Active')
+            ->get();
         $productsAllData = DB::table('products')->get();
 
         return response()->json(['categoryData' => $categoryData, 'sizeData' => $sizeData, 'products' => $productsAllData]);
@@ -122,22 +126,27 @@ class AdminController extends Controller
 
     public function product_store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'product_name' => 'required',
-            'product_price' => 'required|min:3|max:9',
-            'product_category' => 'required',
-            'product_for' => 'required',
-            'product_size' => 'required',
-            'product_image' => 'required|mimes:jpg,png,jpeg,avif'
-        ], []);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'product_name' => 'required',
+                'product_price' => 'required|min:3|max:9',
+                'product_category' => 'required',
+                'product_for' => 'required',
+                'product_size' => 'required',
+                'product_image' => 'required|mimes:jpg,png,jpeg,avif',
+            ],
+            [],
+        );
         if ($validator->fails()) {
             return response()->json(['status' => 'validation_error', 'message' => $validator->messages()]);
         }
 
         try {
-            $filePath = "images/products/" . $request->product_image;
-            if (File::exists($filePath))
+            $filePath = 'images/products/' . $request->product_image;
+            if (File::exists($filePath)) {
                 File::delete($filePath);
+            }
 
             $fileOriginalName = $request->file('product_image')->getClientOriginalName();
 
@@ -150,11 +159,11 @@ class AdminController extends Controller
                 'Product_image' => $fileOriginalName,
                 'created_at' => now(),
                 'updated_at' => now(),
-                'Product_status' => 'Active'
+                'Product_status' => 'Active',
             ]);
 
             if ($productAdd) {
-                $request->product_image->move("images/products", $fileOriginalName);
+                $request->product_image->move('images/products', $fileOriginalName);
                 return response()->json(['status' => 'success', 'message' => 'Product Added successfully']);
             } else {
                 return response()->json(['status' => 'failed', 'message' => 'Error in Inserting the product']);
@@ -162,8 +171,6 @@ class AdminController extends Controller
         } catch (Exception $e) {
             return response()->json(['status' => 'failed', 'message' => $e->getMessage()]);
         }
-
-
     }
 
     public function products_purchase()
@@ -184,11 +191,10 @@ class AdminController extends Controller
                 ->where('Product_id', $product_id)
                 ->where('Product_status', 'Active')
                 ->update(['Product_status' => 'Inactive']);
-            $productDeactivateQuery ? session()->flash('Success', 'Product status updated successfully') : session()->flash('Error', 'Error in updating Product Status');
+            return $productDeactivateQuery ? response()->json(['status' => 'success', 'message' => 'Product status updated successfully']) : response()->json(['status' => 'failed', 'message' => 'Error in updating the status']);
         } else {
-            session()->flash('Error', "Product id $product_id not found");
+            return response()->json(['status' => 'failed', 'message' => 'product not found']);
         }
-        return redirect()->route('products.available');
     }
 
     public function products_activate(string $product_id)
@@ -202,27 +208,30 @@ class AdminController extends Controller
                 ->where('Product_id', $product_id)
                 ->where('Product_status', 'Inactive')
                 ->update(['Product_status' => 'Active']);
-            $productDeactivateQuery ? session()->flash('Success', 'Product status updated successfully') : session()->flash('Error', 'Error in updating Product Status');
+            return $productDeactivateQuery ? response()->json(['status' => 'success', 'message' => 'Product status updated successfully']) : response()->json(['status' => 'failed', 'message' => 'Error in updating the status']);
         } else {
-            session()->flash('Error', "Product id $product_id not found");
+            return response()->json(['status' => 'failed', 'message' => 'product not found']);
         }
-        return redirect()->route('products.available');
     }
 
     public function products_delete(string $product_id)
     {
-        $productIfExists = DB::table('products')
-            ->where('Product_id', $product_id)
-            ->first();
-        if ($productIfExists) {
-            $productDeactivateQuery = DB::table('products')
+        try {
+            $productIfExists = DB::table('products')
                 ->where('Product_id', $product_id)
-                ->update(['Product_status' => 'Deleted']);
-            $productDeactivateQuery ? session()->flash('Success', 'Product status updated successfully') : session()->flash('Error', 'Error in updating Product Status');
-        } else {
-            session()->flash('Error', "Product id $product_id not found");
+                ->first();
+            if ($productIfExists) {
+                $deleteQuery = DB::table('products')
+                    ->where('Product_id', $product_id)
+                    ->delete();
+
+                return $deleteQuery ? response()->json(['status' => 'success', 'message' => 'Prodcut deleted successfully']) : response()->json(['status' => 'failed', 'Error in deleting the product']);
+            } else {
+                return response()->json(['status' => 'success', 'message' => 'Product not founded']);
+            }
+        } catch (Exception $e) {
+            return response()->json(['status' => 'failed', 'message' => $e->getMessage()]);
         }
-        return redirect()->route('products.available');
     }
 
     public function product_reactivate(string $product_id)
@@ -370,8 +379,7 @@ class AdminController extends Controller
         return view('pages.customer_add', compact('admin_data'));
     }
 
-
-    // Insert the customer if there is any profile picture or not 
+    // Insert the customer if there is any profile picture or not
     public function customer_store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -453,21 +461,25 @@ class AdminController extends Controller
         }
 
         if ($request->has('customer_profile')) {
-            $filePath = "images/profiles/" . $request->customer_profile;
-            if (File::exists($filePath))
+            $filePath = 'images/profiles/' . $request->customer_profile;
+            if (File::exists($filePath)) {
                 File::delete($filePath);
+            }
             $fileOriginalName = $request->file('customer_profile')->getClientOriginalName();
 
-            $update_query = DB::table('customer_registration')->where('id', $request->id)->update(['customer_name' => $request->customer_name, 'customer_mobile' => $request->customer_mobile, 'customer_password' => $request->customer_password, 'customer_gender' => $request->customer_gender, 'customer_profile' => $fileOriginalName]);
+            $update_query = DB::table('customer_registration')
+                ->where('id', $request->id)
+                ->update(['customer_name' => $request->customer_name, 'customer_mobile' => $request->customer_mobile, 'customer_password' => $request->customer_password, 'customer_gender' => $request->customer_gender, 'customer_profile' => $fileOriginalName]);
             if ($update_query) {
-                $request->customer_profile->move("images/profiles/", $fileOriginalName);
+                $request->customer_profile->move('images/profiles/', $fileOriginalName);
                 return response()->json(['status' => 'success', 'message' => 'record updated successfully']);
             } else {
                 return response()->json(['status' => 'failed', 'message' => 'error in record updating']);
             }
         } else {
-
-            $update_query = DB::table('customer_registration')->where('id', $request->id)->update(['customer_name' => $request->customer_name, 'customer_mobile' => $request->customer_mobile, 'customer_password' => $request->customer_password, 'customer_gender' => $request->customer_gender]);
+            $update_query = DB::table('customer_registration')
+                ->where('id', $request->id)
+                ->update(['customer_name' => $request->customer_name, 'customer_mobile' => $request->customer_mobile, 'customer_password' => $request->customer_password, 'customer_gender' => $request->customer_gender]);
 
             return $update_query ? response()->json(['status' => 'success', 'message' => 'record updated successfully']) : response()->json(['status' => 'failed', 'message' => 'error in updating record']);
         }
@@ -918,5 +930,4 @@ class AdminController extends Controller
         }
         return redirect()->route('category.available');
     }
-
 }
