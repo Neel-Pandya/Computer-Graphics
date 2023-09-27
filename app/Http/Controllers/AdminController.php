@@ -50,8 +50,8 @@ class AdminController extends Controller
                 ->where('Product_id', $product_id)
                 ->first();
             if ($productFind) {
-                $categoryFind = DB::table('categories')->where('category_name', '<>', $productFind->Product_category)->get();
-                $sizesFind = DB::table('sizes')->where('size_name', '<>', $productFind->Product_size)->get();
+                $categoryFind = DB::table('categories')->get();
+                $sizesFind = DB::table('sizes')->get();
                 return response()->json(['status' => 'success', 'product' => $productFind, 'category' => $categoryFind, 'size' => $sizesFind]);
             } else {
                 return response()->json(['status' => 'failed', 'message' => 'Product not found']);
@@ -63,46 +63,49 @@ class AdminController extends Controller
 
     public function products_update(Request $request)
     {
-        $request->validate([
-            'product_name' => 'required',
-            'product_price' => 'required|numeric',
-            'product_category' => 'required',
-            'product_for' => 'required',
-            'product_size' => 'required|alpha',
-            'product_image' => 'mimes:jpg,png',
+
+        $validator = Validator::make($request->all(), [
+            'edit_product_id' => 'required',
+            'edit_product_name' => 'required',
+            'edit_product_price' => 'required',
+            'edit_product_category' => 'required',
+            'edit_product_for' => 'required',
+            'edit_product_size' => 'required',
+            'edit_product_image' => 'mimes:jpg,png,avif,jpeg',
         ]);
 
-        $recordExists = DB::table('products')
-            ->where('Product_id', $request->product_id)
-            ->first();
-        if ($recordExists) {
-            if ($request->has('product_image')) {
-                $filePath = "images/products/$request->product_image";
-                if (File::exists($filePath)) {
-                    File::delete($filePath);
-                }
-                $fileOriginalName = $request->file('product_image')->getClientOriginalName();
-
-                $update = DB::table('products')
-                    ->where('Product_id', $request->product_id)
-                    ->update(['Product_name' => $request->product_name, 'Product_price' => $request->product_price, 'Product_category' => $request->product_category, 'Product_for' => $request->product_for, 'Product_size' => $request->product_size, 'Product_image' => $fileOriginalName]);
-
-                if ($update) {
-                    $request->product_image->move(public_path('images/products/'), $fileOriginalName);
-                    session()->flash('Success', 'Product updated successfully');
-                } else {
-                    session()->flash('Error', 'Error in updating the product');
-                }
-            } else {
-                $update = DB::table('products')
-                    ->where('Product_id', $request->product_id)
-                    ->update(['Product_name' => $request->product_name, 'Product_price' => $request->product_price, 'Product_category' => $request->product_category, 'Product_for' => $request->product_for, 'Product_size' => $request->product_size]);
-
-                $update ? session()->flash('Success', 'Product updated successfully') : session()->flash('Error', 'Error in updating Product');
-            }
+        if ($validator->fails()) {
+            return response()->json(['status' => 'validation', 'error' => $validator->messages()]);
         }
-        return redirect()->route('products.available');
+        try {
+            if ($request->has('edit_product_image')) {
+                $file = "images/products/" . $request->edit_product_image;
+                $fileOriginalName = $request->file('edit_product_image')->getClientOriginalName();
+                if (File::exists($file)) {
+                    File::delete($file);
+                }
+
+                $update = DB::table('products')->where('Product_id', $request->edit_product_id)->update(['Product_name' => $request->edit_product_name, 'Product_price' => $request->edit_product_price, 'Product_category' => $request->edit_product_category, 'Product_for' => $request->edit_product_for, 'Product_size' => $request->edit_product_size, 'Product_image' => $fileOriginalName]);
+                if ($update) {
+                    $request->edit_product_image->move('images/products/', $fileOriginalName);
+
+                    return response()->json(['status' => 'success', 'message' => 'updated successfully']);
+                } else {
+                    return response()->json(['status' => 'failed', 'message' => 'error in updating']);
+
+                }
+
+
+            } else {
+                $update = DB::table('products')->where('Product_id', $request->edit_product_id)->update(['Product_name' => $request->edit_product_name, 'Product_price' => $request->edit_product_price, 'Product_category' => $request->edit_product_category, 'Product_for' => $request->edit_product_for, 'Product_size' => $request->edit_product_size]);
+                return $update ? response()->json(['status' => 'success', 'message' => 'record updated successfully']) : response()->json(['status' => 'failed', 'message' => 'error in updating the record']);
+            }
+        } catch (Exception $e) {
+            return response()->json(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
     }
+
+
 
     public function products_add()
     {
@@ -668,6 +671,40 @@ class AdminController extends Controller
         $admin_data = $this->setdata();
 
         return view('pages.coupen_edit', compact('admin_data'));
+    }
+    public function deactivate_coupen($Id)
+    {
+        $coupen = DB::table('coupens')
+            ->where('id', $Id)
+            ->where('status', 'Active')
+            ->first();
+        if ($coupen) {
+            $coupenDeactivateQuery = DB::table('coupens')
+                ->where('id', $Id)
+                ->where('status', 'Active')
+                ->update(['status' => 'Inactive']);
+            return $coupenDeactivateQuery ? response()->json(['status' => 'success', 'message' => 'Product status updated successfully']) : response()->json(['status' => 'failed', 'message' => 'Error in updating the status']);
+        } else {
+            return response()->json(['status' => 'failed', 'message' => 'product not found']);
+        }
+    }
+
+    // FIXME : 
+    public function activate_coupen($id)
+    {
+        $coupen = DB::table('coupens')
+            ->where('id', $id)
+            ->where('status', 'Inactive')
+            ->first();
+        if ($coupen) {
+            $coupenDeactivateQuery = DB::table('coupens')
+                ->where('id', $id)
+                ->where('status', 'Inactive')
+                ->update(['status' => 'Active']);
+            return $coupenDeactivateQuery ? response()->json(['status' => 'success', 'message' => 'Product status updated successfully']) : response()->json(['status' => 'failed', 'message' => 'Error in updating the status']);
+        } else {
+            return response()->json(['status' => 'failed', 'message' => 'product not found']);
+        }
     }
     public function getSelectedCoupen($id)
     {

@@ -81,7 +81,9 @@ Route::prefix('admin')->group(function () {
             Route::post('update', [AdminController::class, 'coupen_update'])->name('coupen.update');
             Route::get('used_coupen', [AdminController::class, 'coupen_use'])->name('coupen.use');
             Route::get('load_coupen', [AdminController::class, 'coupen_load'])->name('coupen.load');
+            Route::get('deactivate/{id}', [AdminController::class, 'deactivate_coupen'])->name('coupen.activate');
             Route::get('edit-coupens/{id}', [AdminController::class, 'getSelectedCoupen'])->name('coupens.edit');
+            Route::get('activate/{id}', [AdminController::class, 'activate_coupen']);
             Route::get('delete-coupen/{id}', [AdminController::class, 'deleteCoupen'])->name('coupen.delete');
         });
 
