@@ -63,7 +63,6 @@ class AdminController extends Controller
 
     public function products_update(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'edit_product_id' => 'required',
             'edit_product_name' => 'required',
@@ -79,33 +78,32 @@ class AdminController extends Controller
         }
         try {
             if ($request->has('edit_product_image')) {
-                $file = "images/products/" . $request->edit_product_image;
+                $file = 'images/products/' . $request->edit_product_image;
                 $fileOriginalName = $request->file('edit_product_image')->getClientOriginalName();
                 if (File::exists($file)) {
                     File::delete($file);
                 }
 
-                $update = DB::table('products')->where('Product_id', $request->edit_product_id)->update(['Product_name' => $request->edit_product_name, 'Product_price' => $request->edit_product_price, 'Product_category' => $request->edit_product_category, 'Product_for' => $request->edit_product_for, 'Product_size' => $request->edit_product_size, 'Product_image' => $fileOriginalName]);
+                $update = DB::table('products')
+                    ->where('Product_id', $request->edit_product_id)
+                    ->update(['Product_name' => $request->edit_product_name, 'Product_price' => $request->edit_product_price, 'Product_category' => $request->edit_product_category, 'Product_for' => $request->edit_product_for, 'Product_size' => $request->edit_product_size, 'Product_image' => $fileOriginalName]);
                 if ($update) {
                     $request->edit_product_image->move('images/products/', $fileOriginalName);
 
                     return response()->json(['status' => 'success', 'message' => 'updated successfully']);
                 } else {
                     return response()->json(['status' => 'failed', 'message' => 'error in updating']);
-
                 }
-
-
             } else {
-                $update = DB::table('products')->where('Product_id', $request->edit_product_id)->update(['Product_name' => $request->edit_product_name, 'Product_price' => $request->edit_product_price, 'Product_category' => $request->edit_product_category, 'Product_for' => $request->edit_product_for, 'Product_size' => $request->edit_product_size]);
+                $update = DB::table('products')
+                    ->where('Product_id', $request->edit_product_id)
+                    ->update(['Product_name' => $request->edit_product_name, 'Product_price' => $request->edit_product_price, 'Product_category' => $request->edit_product_category, 'Product_for' => $request->edit_product_for, 'Product_size' => $request->edit_product_size]);
                 return $update ? response()->json(['status' => 'success', 'message' => 'record updated successfully']) : response()->json(['status' => 'failed', 'message' => 'error in updating the record']);
             }
         } catch (Exception $e) {
             return response()->json(['status' => 'failed', 'message' => $e->getMessage()]);
         }
     }
-
-
 
     public function products_add()
     {
@@ -266,31 +264,55 @@ class AdminController extends Controller
 
     public function category_store(Request $request)
     {
-        $request->validate([
-            'category_name' => 'required',
+        $validator = Validator::make($request->all(), [
+            'category_name' => 'required|min:1|max:5',
         ]);
 
-        $storeCategory = DB::table('categories')->insert([
-            'category_name' => $request->category_name,
-            'status' => 'Active',
-        ]);
-        $storeCategory ? session()->flash('Success', 'Category added successfully') : session()->flash('Error', 'Error in adding category');
+        if ($validator->fails()) {
+            return response()->json(['status' => 'validation-error', 'message' => $validator->messages()]);
+        }
 
-        return redirect()->route('category.available');
+        try {
+            $insertCategory = DB::table('categories')->insertOrIgnore([
+                'category_name' => $request->category_name,
+                'status' => 'Active',
+            ]);
+
+            return $insertCategory ? response()->json(['status' => 'success', 'message' => 'category inserted successfully']) : response()->json(['status' => 'error', 'message' => 'Error in inserting the category']);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
     }
 
-    public function category_edit()
+    public function category_edit($id)
     {
-        $admin_data = $this->setdata();
+        $data = DB::table('categories')->find($id);
 
-        return view('pages.category_edit', compact('admin_data'));
+        if ($data) {
+            return response()->json(['status' => 'success', 'category' => $data]);
+        } else {
+            return response()->json(['status' => 'failed', 'message' => 'Category not found']);
+        }
+
     }
 
     public function category_update(Request $request)
     {
-        $request->validate([
-            'category_name' => 'required',
+        $validator = Validator::make($request->all(), [
+            'category_name' => 'required|unique:categories,category_name',
         ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => 'validation-failed', 'error' => $validator->messages()]);
+        }
+
+        try {
+            $update = DB::table('categories')->where('id', $request->id)->update(['category_name' => $request->category_name]);
+
+            return $update ? response()->json(['status' => 'success', 'message' => 'category updated successfully']) : response()->json(['status' => 'failed', 'message' => 'error in updating the category']);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+
     }
 
     public function getAllCustomer()
@@ -390,7 +412,7 @@ class AdminController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['status' => 'errors', 'error' => $validator->messages()]);
+            return response()->json(['status' => 'validation', 'error' => $validator->messages()]);
         }
 
         if ($request->customer_profile) {
@@ -689,7 +711,7 @@ class AdminController extends Controller
         }
     }
 
-    // FIXME : 
+    // FIXME :
     public function activate_coupen($id)
     {
         $coupen = DB::table('coupens')
@@ -805,78 +827,87 @@ class AdminController extends Controller
 
     public function sizes_store(Request $request)
     {
-        $request->validate(
-            [
-                'product_size' => 'required|regex:/^[A-Z]{1,4}$/',
-            ],
-            [
-                'product_size.required' => 'This field is required',
-                'product_size.regex' => 'Product size must be of less than or equal to 4 character and only capital letters allowed',
-            ],
-        );
-
-        $sizesAddData = DB::table('sizes')->insert([
-            'size_name' => $request->product_size,
-            'status' => 'Active',
-            'created_at' => now(),
-            'updated_at' => now(),
+        $validator = Validator::make($request->all(), [
+            'size_name' => 'required|unique:sizes,size_name',
         ]);
-        $sizesAddData ? session()->flash('Success', 'Size added successfully') : session()->flash('Error', 'Error in inserting the Size');
-        return redirect()->route('sizes.available');
-    }
 
-    public function deactviate_sizes(string $size_name)
-    {
-        $check = DB::table('sizes')
-            ->where('size_name', $size_name)
-            ->first();
-        if ($check) {
-            $checkIfSizeStatusIsActive = DB::table('sizes')
-                ->where('size_name', $size_name)
-                ->where('status', 'Active')
-                ->update(['status' => 'Deactive']);
-            $checkIfSizeStatusIsActive ? session()->flash('Success', 'Status updated successfully') : session()->flash('Error', 'Error in updating status');
-        } else {
-            session()->flash('Error', "Size name $size_name not found");
+        if ($validator->fails()) {
+            return response()->json(['status' => 'validation', 'errors' => $validator->messages()]);
         }
-        return redirect()->route('sizes.available');
-    }
-
-    public function activate_sizes(string $size_name)
-    {
-        $check = DB::table('sizes')
-            ->where('size_name', $size_name)
-            ->first();
-        if ($check) {
-            $checkIfSizeStatusIsActive = DB::table('sizes')
-                ->where('size_name', $size_name)
-                ->where('status', 'Deactive')
-                ->update(['status' => 'Active']);
-            $checkIfSizeStatusIsActive ? session()->flash('Success', 'Status updated successfully') : session()->flash('Error', 'Error in updating status');
-        } else {
-            session()->flash('Error', "Size name $size_name not found");
+        try {
+            $insertSizes = DB::table('sizes')->insertOrIgnore([
+                'size_name' => $request->size_name,
+                'status' => 'Active',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            return $insertSizes ? response()->json(['status' => 'success', 'message' => 'Size Added successfully']) : response()->json(['status' => 'failed', 'message' => 'error in inserting the size']);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'failed', 'message' => $e->getMessage()]);
         }
-        return redirect()->route('sizes.available');
     }
 
-    public function delete_sizes(string $size_name)
+    public function deactviate_sizes(string $id)
     {
-        $check = DB::table('sizes')
-            ->where('size_name', $size_name)
-            ->first();
-        if ($check) {
-            $setSizeStatusDeleted = DB::table('sizes')
-                ->where('size_name', $size_name)
-                ->update(['status' => 'Deleted']);
-
-            $setSizeStatusDeleted ? session()->flash('Success', 'status updated successfully') : session()->flash('Error', 'Error in updating the status');
+        $find = DB::table('sizes')->where('id', $id)->where('status', 'Active')->first();
+        if ($find) {
+            $update = DB::table('sizes')->where('id', $id)->where('status', 'Active')->update(['status' => 'Inactive']);
+            return $update ? response()->json(['status' => 'success', 'message' => 'status updated successfully']) : response()->json(['status' => 'failed', 'message' => 'error in updating the status']);
         } else {
-            session()->flash('Error', "Size $size_name not found");
+            return response()->json(['status' => 'failed', 'message' => 'id not found']);
+        }
+    }
+
+    public function activate_sizes(string $id)
+    {
+        $find = DB::table('sizes')->where('id', $id)->where('status', 'Inactive')->first();
+        if ($find) {
+            $update = DB::table('sizes')->where('id', $id)->where('status', 'Inactive')->update(['status' => 'Active']);
+            return $update ? response()->json(['status' => 'success', 'message' => 'status updated successfully']) : response()->json(['status' => 'failed', 'message' => 'error in updating the status']);
+        } else {
+            return response()->json(['status' => 'failed', 'message' => 'id not found']);
+        }
+    }
+
+    public function delete_sizes(string $id)
+    {
+        $find = DB::table('sizes')->where('id', $id)->first();
+        if ($find) {
+            $update = DB::table('sizes')->where('id', $id)->delete();
+            return $update ? response()->json(['status' => 'success', 'message' => 'Size Deleted Successfully']) : response()->json(['status' => 'failed', 'message' => 'Error in deleting the size']);
+        } else {
+            return response()->json(['status' => 'failed', 'message' => 'id not found']);
+        }
+    }
+
+    public function edit_size($id)
+    {
+        $find = DB::table('sizes')->find($id);
+        return response()->json(['sizes' => $find]);
+    }
+    public function size_update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'size_name' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => 'validation', 'error' => $validator->messages()]);
         }
 
-        return redirect()->route('sizes.available');
-    }
+        try {
+            $update = DB::table('sizes')->where('id', $request->id)->update(['size_name' => $request->size_name]);
 
+            return $update ? response()->json(['status' => 'success', 'message' => 'size updated successfully']) : response()->json(['status' => 'failed', 'message' => 'Error in updating the size']);
+        } catch (Exception $e) {
+            return response()->json(['status' => 'failed', 'message' => $e->getMessage()]);
+        }
+
+    }
+    public function getSizes()
+    {
+        $data = DB::table('sizes')->get();
+        return response()->json(['size' => $data]);
+    }
     public function reactivate_sizes(string $size_name)
     {
         $check = DB::table('sizes')
@@ -896,54 +927,51 @@ class AdminController extends Controller
         return redirect()->route('sizes.available');
     }
 
-    public function activate_category(string $category_name)
+    public function activate_category(string $id)
     {
         $checkIfCategoryExists = DB::table('categories')
-            ->where('category_name', $category_name)
+            ->where('id', $id)
             ->first();
         if ($checkIfCategoryExists) {
             $checkIfCategoryStatusUpdated = DB::table('categories')
-                ->where('category_name', $category_name)
+                ->where('id', $id)
                 ->where('status', 'Deactive')
                 ->update(['status' => 'Active']);
-            $checkIfCategoryStatusUpdated ? session()->flash('Success', 'Category status updated successfully') : session()->flash('Error', 'Error in updating category status');
+            return $checkIfCategoryStatusUpdated ? response()->json(['status' => 'success', 'message' => 'Category Status updated successfully']) : response()->json(['status' => 'failed', 'message' => 'Error in updating the status of category']);
         } else {
-            session()->flash('Error', "Category $category_name not found");
+            return response()->json(['status' => 'failed', 'message' => 'Category not found']);
         }
-        return redirect()->route('category.available');
     }
 
-    public function deactivate_category(string $category_name)
+    public function deactivate_category(string $id)
     {
         $checkIfCategoryExists = DB::table('categories')
-            ->where('category_name', $category_name)
+            ->where('id', $id)
             ->first();
         if ($checkIfCategoryExists) {
             $checkIfCategoryStatusUpdated = DB::table('categories')
-                ->where('category_name', $category_name)
+                ->where('id', $id)
                 ->where('status', 'Active')
                 ->update(['status' => 'Deactive']);
-            $checkIfCategoryStatusUpdated ? session()->flash('Success', 'Category status updated successfully') : session()->flash('Error', 'Error in updating category status');
+            return $checkIfCategoryStatusUpdated ? response()->json(['status' => 'success', 'message' => 'Category Status updated successfully']) : response()->json(['status' => 'failed', 'message' => 'Error in updating the status of category']);
         } else {
-            session()->flash('Error', "Category $category_name not found");
+            return response()->json(['status' => 'failed', 'message' => 'Category not found']);
         }
-        return redirect()->route('category.available');
     }
 
-    public function delete_category(string $category_name)
+    public function delete_category(string $id)
     {
         $checkIfCategoryExists = DB::table('categories')
-            ->where('category_name', $category_name)
+            ->where('id', $id)
             ->first();
         if ($checkIfCategoryExists) {
             $checkIfCategoryStatusDeleted = DB::table('categories')
-                ->where('category_name', $category_name)
-                ->update(['status' => 'Deleted']);
-            $checkIfCategoryStatusDeleted ? session()->flash('Success', 'Category status updated successfully') : session()->flash('Error', 'Error in updating category status');
+                ->where('id', $id)
+                ->delete();
+            return $checkIfCategoryStatusDeleted ? response()->json(['status' => 'success', 'message' => 'Category Deleted successfully']) : response()->json(['status' => 'failed', 'message' => 'Error in Deleting the category']);
         } else {
-            session()->flash('Error', "Category $category_name not found");
+            return response()->json(['status' => 'failed', 'message' => 'Category Not Found']);
         }
-        return redirect()->route('category.available');
     }
 
     public function reactivate_category(string $category_name)
@@ -962,4 +990,13 @@ class AdminController extends Controller
         }
         return redirect()->route('category.available');
     }
+
+    public function getData()
+    {
+        $categoryData = DB::table('categories')->get();
+
+        return response()->json(['data' => $categoryData]);
+    }
+
+
 }

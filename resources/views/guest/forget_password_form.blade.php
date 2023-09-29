@@ -54,7 +54,7 @@
                         </span>
                     </div>
 
-                    <input type="submit" class="button" value="Register">
+                    <input type="submit" class="button" value="Forget Password">
                 </div>
             </form>
             <div class="signup">

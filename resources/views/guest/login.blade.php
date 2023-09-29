@@ -1,24 +1,15 @@
 @extends('guest.master')
 
-@section('title')
-    login page
+
+@section('titles')
+
+Edit Profile
+
 @endsection
 
 @section('content')
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-
-
-
-    </div>
-    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-
-    <body>
-        <div class="container col-4">
-            <input type="checkbox" id="check">
-            <div class="login form">
+<div class="container">
+            <div class="index form d-flex justify-content-center align-items-center vh-100" >
                 <div class="alertMessages">
                     @if (session()->has('Success'))
                         <div class="alert alert-success  d-flex align-items-center" role="alert">
@@ -46,36 +37,48 @@
 
                         </div>
                     @endif
+                </div>
 
-                    <header>Login</header>
-                    <form action="{{ route('guest.login.validate') }}" method="POST">
+                    <form action="{{ route('guest.login.validate') }}" method="POST" class="" >
+                        <div class="col-lg-12 col-md-12s col-sm-12 text-center" >
+                        <h3>Login</h3>  
+                        </div>
+                        <div class="row">
                         @csrf
-                        <input type="text" placeholder="Enter your email" name="customer_email" class="mt-5"
+                        <div class="col-lg-6 col-md-6 col-sm-12 mt-4">
+                        <label for="" class="form-label">Enter Email</label>
+                        <input type="text" placeholder="Enter your email" name="customer_email" class="form-control"
                             value="{{ old('customer_email') }}">
                         <span class="text-danger">
                             @error('customer_email')
                                 {{ $message }}
                             @enderror
                         </span>
-                        <input type="password" placeholder="Enter your password" name="customer_password" class="mt-5"
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 mt-4">
+                        <label for="" class="form-label">Enter password</label>
+                        <input type="password" placeholder="Enter your password" name="customer_password" class="form-control "
                             value="{{ old('customer_password') }}">
                         <span class="text-danger">
                             @error('customer_password')
                                 {{ $message }}
                             @enderror
                         </span>
-                        <br><br>
+                        </div>
+                        
+                        <div class="col-lg-12 col-md-12 col-sm-12">
 
-                        <input type="submit" class="button" value="Login">
+                        <input type="submit" class="btn btn-success mt-3 col-12" value="Login">
+                        </div>
                     </form>
-                    <div class="signup">
+                    <div class="signup mt-4 col-lg-12 col-md-12 col-sm-12 d-flex justify-content-end ">
                         <span class="signup">Don't have an account?
                             <a href="{{ route('guest.register') }}">Register</a>
                         </span>
                     </div>
 
 
-                    <div class="forgetpasword">
+                    <div class="forgetpasword col-12 d-flex justify-content-end mt-2">
                         <span class="forget">Forget Password
                             <a href="{{ route('forget.password') }}">forget</a>
                         </span>
@@ -84,6 +87,9 @@
 
 
                 </div>
+                
+                </div>
             </div>
-    </body>
+        </div>
+
 @endsection

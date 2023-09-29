@@ -40,16 +40,20 @@ Route::prefix('admin')->group(function () {
             Route::get('available_category', [AdminController::class, 'category_create'])->name('category.available');
             Route::get('category_add', [AdminController::class, 'category_add'])->name('category.add');
             Route::post('category_store', [AdminController::class, 'category_store'])->name('category.store');
-            Route::get('category_edit', [AdminController::class, 'category_edit'])->name('category.edit');
+            Route::get('category_edit/{id}', [AdminController::class, 'category_edit'])->name('category.edit');
             Route::post('category_update', [AdminController::class, 'category_update'])->name('category.update');
             Route::get('shoes', [AdminController::class, 'shoes'])->name('category.shoes');
             Route::get('shirt', [AdminController::class, 'shirt'])->name('category.shirt');
             Route::get('jeans', [AdminController::class, 'jeans'])->name('category.jeans');
             Route::get('hoodie', [AdminController::class, 'hoodie'])->name('category.hoodie');
-            Route::get('activate/{category_name}', [AdminController::class, 'activate_category'])->name('category.activate');
-            Route::get('deactivate/{category_name}', [AdminController::class, 'deactivate_category'])->name('category.deactivate');
-            Route::get('delete/{category_name}', [AdminController::class, 'delete_category'])->name('category.delete');
+            Route::get('activate/{id}', [AdminController::class, 'activate_category'])->name('category.activate');
+            Route::get('deactivate/{id}', [AdminController::class, 'deactivate_category'])->name('category.deactivate');
+            Route::get('delete/{id}', [AdminController::class, 'delete_category'])->name('category.delete');
             Route::get('reactivate/{category_name}', [AdminController::class, 'reactivate_category'])->name('category.reactivate');
+            Route::get('get-data', [AdminController::class, 'getData'])->name('category.get.data');
+
+
+
         });
 
         Route::prefix('customers')->group(function () {
@@ -92,10 +96,13 @@ Route::prefix('admin')->group(function () {
             Route::get('available', [AdminController::class, 'sizes_available'])->name('sizes.available');
             Route::get('add', [AdminController::class, 'sizes_add'])->name('sizes.add');
             Route::post('store', [AdminController::class, 'sizes_store'])->name('sizes.store');
-            Route::get('deactivate/{size_name}', [AdminController::class, 'deactviate_sizes'])->name('sizes.deactivate');
-            Route::get('activate/{size_name}', [AdminController::class, 'activate_sizes'])->name('sizes.activate');
-            Route::get('delete/{size_name}', [AdminController::class, 'delete_sizes'])->name('sizes.delete');
+            Route::get('deactivate/{id}', [AdminController::class, 'deactviate_sizes'])->name('sizes.deactivate');
+            Route::get('activate/{id}', [AdminController::class, 'activate_sizes'])->name('sizes.activate');
+            Route::get('delete/{id}', [AdminController::class, 'delete_sizes'])->name('sizes.delete');
             Route::get('reactive/{size_name}', [AdminController::class, 'reactivate_sizes'])->name('sizes.reactivate');
+            Route::get('get-data', [AdminController::class, 'getSizes']);
+            Route::get('edit/{id}', [AdminController::class, 'edit_size']);
+            Route::post('update', [AdminController::class, 'size_update']);
         });
     });
 });
@@ -118,4 +125,9 @@ Route::prefix('guest_user')->group(function () {
     Route::view('verify_otp_forget_password', 'verify_otp_forget_pwd')->name('verify.otp.forget.password');
     Route::view('reset_pwd', 'guest.reset_pwd')->name('reset.pwd');
     Route::post('reset_pwd_action', [BeforeLoginController::class, 'reset_pwd_action'])->name('reset.password.action');
+    Route::get('edit_profile', [UserController::class, 'edit_profile'])->name('user.edit.profile');
+    Route::get('logout', [UserController::class, 'guest_logout'])->name('guest.logout');
+    Route::post('edit_profile_validate', [UserController::class, 'edit_profile_validate'])->name('edit.profile.validate');
+    Route::view('change_password', 'guest.change_password')->name('user.change.password');
+    Route::post('change_password_validate', [UserController::class, 'change_password_validate'])->name('change.password.validate');
 });

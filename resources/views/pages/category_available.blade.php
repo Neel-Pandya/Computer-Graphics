@@ -4,68 +4,79 @@
 @endsection
 @section('content')
     <div class="table-responsive">
-        @if (session()->has('Success'))
-            <div class="alert alert-success  d-flex align-items-center" role="alert">
-                <strong>
-                    {{ session('Success') }}
-                </strong>
+        <table class="table  table-striped  table-bordered table-hover">
 
-                <script>
-                    setTimeout(() => {
-                        $('.alert').alert('close');
-                    }, 5000);
-                </script>
-                @php session()->forget('Success');  @endphp
+
+            <thead class="bg-dark text-light text-center ">
+                <th>Id</th>
+                <th>Category name</th>
+                <th>Category Status</th>
+                <th colspan="2">Actions</th>
+
+            </thead>
+            <tbody class="text-center">
+          
+            </tbody>
+        </table>
+    </div>
+    <a><button class="btn btn-info mt-4 add-category-button">Add
+            Category</button></a>
+    </div>
+    </div>
+    {{-- Add Category Modal --}}
+    <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title fs-6" id="exampleModalLabel">Add Category</h3>
+
+                </div>
+                <div class="modal-body">
+                    <ul class="category-error-messages alert-danger">
+
+                    </ul>
+                    <form method="POST" id="addCategoryForm">
+                        <label for="" class="form-label">Enter Category Name</label>
+                        <input type="text" id="category_name" class="form-control">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add Category</button>
+                </div>
+                </form>
             </div>
-        @elseif(session()->has('Error'))
-            <div class="alert alert-danger d-flex align-items-center" role="alert">
-                {{ session('Error') }}
-                <script>
-                    setTimeout(() => {
-                        $('.alert').alert('close');
-                    }, 5000);
-                </script>
-                @php session()->forget('Error'); @endphp
+        </div>
+    </div>
 
 
+    {{-- Edit Category Modal --}}
+    <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title fs-6" id="exampleModalLabel">Edit Category</h3>
+    
+                </div>
+                <div class="modal-body">
+                    <ul class="edit-category-error-messages alert-danger">
+    
+                    </ul>
+                    <form method="POST" id="editCategoryForm">
+                        <input type="hidden" name="" id="edit-id">
+                        <label for="" class="form-label">Enter Category Name</label>
+                        <input type="text" id="edit_category_name" class="form-control">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add Category</button>
+                </div>
+                </form>
             </div>
-        @endif
+        </div>
     </div>
-    <table class="table  table-striped  table-bordered table-hover">
-        <caption class="mt-4"><a href="{{ route('category.add') }}"><button class="btn btn-info">Add
-                    Category</button></a></caption>
+@endsection
 
-        <thead class="bg-dark text-light text-center ">
-            <th>Id</th>
-            <th>Category name</th>
-            <th>Category Status</th>
-            <th colspan="2">Actions</th>
-
-        </thead>
-        <tbody class="text-center">
-            @forelse($category_data as $data)
-                <tr>
-                    <td>{{ $data->id }}</td>
-                    <td>{{ $data->category_name }}</td>
-                    <td>
-                        @if ($data->status == 'Active')
-                            <a href="{{ route('category.deactivate', ['category_name' => $data->category_name]) }}"><button
-                                    class="btn btn-danger">Deactivate</button></a>
-                        @elseif($data->status == 'Deactive')
-                            <a href="{{ route('category.activate', ['category_name' => $data->category_name]) }}"><button
-                                    class="btn btn-success">Active</button></a>
-                        @elseif($data->status == 'Deleted')
-                            <a href="{{ route('category.reactivate', ['category_name' => $data->category_name]) }}"><button class="btn btn-danger">Reactivate</button></a>
-                        @endif
-                    </td>
-                    <td><a href=""><button class="btn btn-info">Edit</button></a></td>
-                    <td><a href="{{ route('category.delete', ['category_name' => $data->category_name]) }}"><button class="btn btn-danger">Delete</button></a></td>
-                </tr>
-            @empty
-            @endforelse
-            {{ $category_data->links() }}
-        </tbody>
-    </table>
-    </div>
-    </div>
+@section('scripts')
+    <script src="{{ asset('js/custom.js') }}"></script>
+    <script src="{{ asset('js/category.js') }}"></script>
 @endsection

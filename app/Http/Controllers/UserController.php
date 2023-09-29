@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\RegistrationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
@@ -59,7 +60,8 @@ class UserController extends Controller
         $mailData = [
             'title' => 'Registration Successful',
             'body' => 'Hello ' . $request->customer_name . ' your account is created successfully. Please click below link to activate your account.',
-            'token' => $token, // Include the token in the email data
+            'token' => $token,
+            // Include the token in the email data
             'email' => $request->customer_email,
         ];
         $request->validate(
@@ -157,14 +159,23 @@ class UserController extends Controller
                 'customer_email.email' => 'Email field must be type of email',
             ],
         );
-        $count = DB::table('customer_registration')->where('customer_email',$request->customer_email)->where('customer_password', $request->customer_password)->count();
-        if($count == 1){
-            $userData = DB::table('customer_registration')->where('customer_email', $request->customer_email)->where('customer_password', $request->customer_password)->get();
+        $count = DB::table('customer_registration')->where('customer_email', $request->customer_email)->where('customer_password', $request->customer_password)->count();
+        if ($count == 1) {
+            $userData = DB::table('customer_registration')->where('customer_email', $request->customer_email)->where('customer_password', $request->customer_password)->where('customer_status', 'Active')->first();
+            if ($userData) {
+                session()->put('user_email', $request->customer_email);
+                session()->put('user_password', $request->customer_password);
+                return redirect()->route('guest.create');
 
+            } else {
+                session()->flash('Error', 'Account is not active please activate the account first');
+            }
+
+        } else {
+            session()->flash('Error', 'User Not Found');
         }
-        else{
-            echo "not found";
-        }
+        return redirect()->route('guest.login');
+
     }
 
     public function activate_account($email, $token, Request $request)
@@ -188,6 +199,69 @@ class UserController extends Controller
         } else {
             session()->flash('Error', 'Error In activating the account');
             return redirect()->route('guest.login');
+        }
+    }
+
+    public function edit_profile()
+    {
+        $userData = DB::table('customer_registration')->where('customer_email', session()->get('user_email'))->where('customer_password', session()->get('user_password'))->first();
+        return view('guest.edit_profile', compact('userData'));
+    }
+
+    public function edit_profile_validate(Request $request)
+    {
+        $request->validate([
+            'customer_name' => 'required',
+            'customer_mobile' => 'required|digits:10',
+            'customer_profile' => 'mimes:png,jpg,jpeg,avif'
+        ]);
+        if ($request->has('customer_profile')) {
+            $filePath = "images/profiles/$request->customer_profile";
+            $fileOriginalName = $request->file("customer_profile")->getClientOriginalName();
+            if (File::exists($filePath)) {
+                File::delete($filePath);
+            }
+
+            $userData = DB::table('customer_registration')->where('customer_email', $request->customer_email)->update(['customer_name' => $request->customer_name, 'customer_mobile' => $request->customer_mobile, 'customer_profile' => $fileOriginalName]);
+
+            if ($userData) {
+                $request->customer_profile->move("images/profiles/", $fileOriginalName);
+                session()->flash('Success', 'Profile updated successfully');
+            } else {
+                session()->flash('Error', 'Error in Updating the profile');
+            }
+
+        } else {
+            $userData = DB::table('customer_registration')->where('customer_email', $request->customer_email)->update(['customer_name' => $request->customer_name, 'customer_mobile' => $request->customer_mobile]);
+
+            $userData ? session()->flash('Success', 'Profile Updated Successfully') : session()->flash('Error', 'Error in updating the profile');
+        }
+        return redirect()->route('user.edit.profile');
+    }
+    public function guest_logout()
+    {
+        session()->forget('user_email');
+        session()->forget('user_password');
+        return redirect()->route('guest.login');
+    }
+
+    public function change_password_validate(Request $request)
+    {
+        $request->validate([
+            'old_pass' => 'required',
+            'new_pass' => 'required|confirmed|min:8|max:16',
+
+            'new_pass_confirmation' => 'required',
+        ]);
+        if ($request->new_pass == $request->old_pass) {
+            session()->flash('Error', 'The new Password cannot be old password');
+            return redirect()->route('user.change.password');
+        } else {
+            $updateQueryForPassword = DB::table('customer_registration')
+                ->where('customer_password', $request->old_pass)
+                ->update(['customer_password' => $request->new_pass]);
+            $updateQueryForPassword ? session()->flash('Success', 'Password Updated Successfully') : session()->flash('Error', 'Error in Updating the password');
+            return redirect()->route('user.change.password');
         }
     }
 }
