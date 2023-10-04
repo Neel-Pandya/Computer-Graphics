@@ -293,7 +293,6 @@ class AdminController extends Controller
         } else {
             return response()->json(['status' => 'failed', 'message' => 'Category not found']);
         }
-
     }
 
     public function category_update(Request $request)
@@ -312,7 +311,6 @@ class AdminController extends Controller
         } catch (Exception $e) {
             return response()->json(['status' => 'failed', 'message' => $e->getMessage()]);
         }
-
     }
 
     public function getAllCustomer()
@@ -620,11 +618,14 @@ class AdminController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
+
             'email' => 'required|email',
             'password' => 'required',
         ]);
-
+        if ($validator->fails()) {
+            return response()->json(['status' => 'Validation', 'errors' => $validator->messages()]);
+        }
         $admin_details = DB::table('admin')
             ->where('admin_email', $request->email)
             ->where('admin_password', $request->password)
@@ -632,9 +633,9 @@ class AdminController extends Controller
         if ($admin_details) {
             session()->put('admin_email', $request->email);
             session()->put('admin_password', $request->password);
-            return redirect()->route('admin.dashboard');
+            return response()->json(['status' => 'success', 'message' => 'Login Successfully']);
         } else {
-            return redirect()->route('admin.login');
+            return response()->json(['status' => 'failed', 'message' => 'Invalid Credentials']);
         }
     }
 
@@ -901,7 +902,6 @@ class AdminController extends Controller
         } catch (Exception $e) {
             return response()->json(['status' => 'failed', 'message' => $e->getMessage()]);
         }
-
     }
     public function getSizes()
     {
@@ -997,6 +997,4 @@ class AdminController extends Controller
 
         return response()->json(['data' => $categoryData]);
     }
-
-
 }

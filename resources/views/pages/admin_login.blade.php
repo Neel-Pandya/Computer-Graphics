@@ -29,24 +29,24 @@
 
 
                             <h3 class="font-weight-light text-center"> Admin Login</h3>
-                            <form class="pt-3" method="POST" action="{{ route('login.validate') }}">
+                            <form class="pt-3" method="POST" id="loginForm">
+
                                 @csrf
                                 <div class="form-group">
+                                    <ul id="login-error-messages"></ul>
+                                </div>
+                                <div class="form-group">
                                     <input type="email" name="email" class="form-control form-control-lg"
-                                        id="exampleInputEmail1" placeholder="email">
+                                        id="login_email" placeholder="email">
                                     <span class="text-danger">
-                                        @error('email')
-                                            {{ $message }}
-                                        @enderror
+
                                     </span>
                                 </div>
                                 <div class="form-group">
                                     <input type="password" name="password" class="form-control form-control-lg"
-                                        id="exampleInputPassword1" placeholder="Password">
+                                        id="login_password" placeholder="Password">
                                     <span class="text-danger">
-                                        @error('password')
-                                            {{ $message }}
-                                        @enderror
+
                                     </span>
                                 </div>
                                 <div class="mt-3">
@@ -67,5 +67,69 @@
 
 
 </body>
+
+<script src="{{ asset('js/jquery.js') }}"></script>
+<script src="{{ asset('js/custom.js') }}"></script>
+<script src="{{ asset('js/sweetAlert.js') }}"></script>
+<!-- FIXME: do that later -->
+<script>
+    $(document).ready(function () {
+
+        $(document).on('submit', '#loginForm', function (event) {
+            event.preventDefault()
+            let formData = new FormData(this)
+            formData.append('email', $("#login_email").val())
+            formData.append('password', $("#login_password").val())
+            $.ajax({
+                type: "POST",
+                url: "{{ URL::to('/') }}/admin/login_validate",
+                data: formData,
+                contentType: false,
+                processData: false,
+
+                success: function (response) {
+                    if (response.status == 'Validation') {
+                        $('#login-error-messages').addClass('alert alert-danger');
+                        $("#login-error-messages").html("")
+                        $.each(response.errors, function (indexInArray, valueOfElement) {
+                            $("#login-error-messages").append(`<li style='list-style:none;'>${valueOfElement}</li>`);
+                        });
+                    }
+                    else {
+                        $("#login-error-messages").removeClass('alert alert-danger')
+                        $("#login-error-messages").html('');
+                    }
+
+                    if (response.status == 'success') {
+                        Swal.fire({
+                            timer: 1000,
+                            timerProgressBar: true,
+                            didOpen: () => {
+                                Swal.showLoading()
+                                const b = Swal.getHtmlContainer().querySelector('b')
+                                timerInterval = setInterval(() => {
+                                    b.textContent = Swal.getTimerLeft()
+                                }, 100)
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval)
+                            }
+                        }).then((result) => {
+                        location.href = "{{ URL::to('/') }}/admin/dashboard"
+                        })
+                    }
+                    else if (response.status == 'failed') {
+                        sweetAlert('error', response.message);
+                    }
+
+                },
+                error: function (err) {
+                    console.log(err)
+                }
+            });
+        });
+
+    });
+</script>
 
 </html>
