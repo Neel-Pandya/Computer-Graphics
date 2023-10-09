@@ -22,20 +22,7 @@
                 </ul>
             </div>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#form-elements" aria-expanded="false"
-                aria-controls="form-elements">
-                <i class="icon-columns menu-icon"></i>
-                <span class="menu-title">Genders</span>
-                <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="form-elements">
-                <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('gender.male') }}">Male</a></li>
-                    <li class="nav-item"><a href="{{ route('gender.female') }}" class="nav-link">Female</a></li>
-                </ul>
-            </div>
-        </li>
+
         <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
                 <i class="icon-bar-graph menu-icon"></i>
@@ -45,11 +32,6 @@
             <div class="collapse" id="charts">
 
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="{{ route('category.shoes') }}">Shoes</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="{{ route('category.jeans') }}">Jeans</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="{{ route('category.shirt') }}">Shirt</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="{{ route('category.hoodie') }}">Hoodie</a></li>
-
                     <li class="nav-item"><a href="{{ route('category.available') }}" class="nav-link">Product
                             Category</a></li>
 
@@ -94,6 +76,7 @@
                     <li class="nav-item"><a href="{{ route('coupen.use') }}" class="nav-link">Used Coupen</a></li>
                 </ul>
             </div>
+        </li>
 
         <li class="nav-item">
             <a class="nav-link" href="{{ route('sizes.available') }}">
@@ -102,6 +85,22 @@
 
             </a>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('home.create') }}">
+                <i class="icon-grid menu-icon"></i>
+                <span class="menu-title">Home Page</span>
+
+            </a>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link">
+                <i class="icon-grid menu-icon"></i>
+                <span class="menu-title">Trending</span>
+
+            </a>
+        </li>
+
     </ul>
 </nav>

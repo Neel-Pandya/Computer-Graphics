@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BeforeLoginController;
+use App\Http\Controllers\HomeController;
 
 Route::prefix('admin')->group(function () {
     Route::view('login', 'pages.admin_login')
@@ -20,7 +21,7 @@ Route::prefix('admin')->group(function () {
         Route::post('update_pass', [AdminController::class, 'update_password'])->name('admin.password');
         Route::post('update', [AdminController::class, 'admin_update'])->name('admin.update');
         Route::get('logout', [AdminController::class, 'admin_logout'])->name('admin.logout');
-
+        Route::get('home_page', [UserController::class, 'index'])->name('admin.home_page');
         Route::prefix('products')->group(function () {
             Route::get('avialable_products', [AdminController::class, 'products'])->name('products.available');
             Route::get('edit/{product_id}', [AdminController::class, 'products_edit'])->name('products.edit');
@@ -100,6 +101,17 @@ Route::prefix('admin')->group(function () {
             Route::get('get-data', [AdminController::class, 'getSizes']);
             Route::get('edit/{id}', [AdminController::class, 'edit_size']);
             Route::post('update', [AdminController::class, 'size_update']);
+        });
+
+        Route::get('home/home_page', [HomeController::class, 'index'])->name('home.create');
+        Route::prefix('home')->group(function () {
+            Route::post('store', [HomeController::class, 'store']);
+            Route::get('show', [HomeController::class, 'show']);
+            Route::get('activate/{id}', [HomeController::class, 'activate']);
+            Route::get('deactivate/{id}', [HomeController::class, 'deactivate']);
+            Route::get('delete/{id}', [HomeController::class, 'delete']);
+            Route::get('edit/{id}', [HomeController::class, 'edit']);
+            Route::post('update', [HomeController::class, 'update']);
         });
     });
 });

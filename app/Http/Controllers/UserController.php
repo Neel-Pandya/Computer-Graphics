@@ -20,7 +20,11 @@ class UserController extends Controller
 
     public function guest_create()
     {
-        return view('guest.index');
+        $homeData = DB::table('home')->where('id', 1)->where('status', 'Active')->first();
+        $homeAllData = DB::table('home')->where('id', '<>', 1)->where('status', 'Active')->get();
+        $trending = DB::table('home')->where('status', 'Active')->orderBy('created_at')->get();
+        $products = DB::table('products')->where('Product_status', 'Active')->get();
+        return view('guest.index', compact('homeData', 'homeAllData', 'trending', 'products'));
     }
     public function guest_products()
     {
@@ -38,7 +42,10 @@ class UserController extends Controller
     }
     public function guest_categories()
     {
-        return view('guest.categories');
+        $trending = DB::table('products')->where('Product_status', 'Active')->orderBy('created_at')->get();
+        $him = DB::table('products')->where('Product_for', 'Male')->get();
+        $her = DB::table('products')->where('Product_for', 'Female')->get();
+        return view('guest.categories', compact('trending', 'him', 'her'));
     }
     public function guest_contact()
     {
@@ -166,16 +173,13 @@ class UserController extends Controller
                 session()->put('user_email', $request->customer_email);
                 session()->put('user_password', $request->customer_password);
                 return redirect()->route('guest.create');
-
             } else {
                 session()->flash('Error', 'Account is not active please activate the account first');
             }
-
         } else {
             session()->flash('Error', 'User Not Found');
         }
         return redirect()->route('guest.login');
-
     }
 
     public function activate_account($email, $token, Request $request)
@@ -230,7 +234,6 @@ class UserController extends Controller
             } else {
                 session()->flash('Error', 'Error in Updating the profile');
             }
-
         } else {
             $userData = DB::table('customer_registration')->where('customer_email', $request->customer_email)->update(['customer_name' => $request->customer_name, 'customer_mobile' => $request->customer_mobile]);
 
