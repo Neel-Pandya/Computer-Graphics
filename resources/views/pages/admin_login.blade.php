@@ -30,7 +30,6 @@
 
                             <h3 class="font-weight-light text-center"> Admin Login</h3>
                             <form class="pt-3" method="POST" id="loginForm">
-
                                 @csrf
                                 <div class="form-group">
                                     <ul id="login-error-messages"></ul>
