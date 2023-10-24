@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BeforeLoginController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 
 Route::prefix('admin')->group(function () {
     Route::view('login', 'pages.admin_login')
@@ -22,6 +23,7 @@ Route::prefix('admin')->group(function () {
         Route::post('update', [AdminController::class, 'admin_update'])->name('admin.update');
         Route::get('logout', [AdminController::class, 'admin_logout'])->name('admin.logout');
         Route::get('home_page', [UserController::class, 'index'])->name('admin.home_page');
+        Route::get('getProfile', [ProfileController::class, 'getProfile']);
         Route::prefix('products')->group(function () {
             Route::get('avialable_products', [AdminController::class, 'products'])->name('products.available');
             Route::get('edit/{product_id}', [AdminController::class, 'products_edit'])->name('products.edit');

@@ -6,8 +6,6 @@ Rating
 
 @endsection
 
-@section('content')
-@extends('pages.master')
 @section('title')
 Products
 @endsection
@@ -15,7 +13,7 @@ Products
 
 <div class="table-responsive">
     <table class="table  table-striped  table-bordered">
-     
+
         <thead class="table-dark text-center ">
             <th>Cust id</th>
             <th>Customer name</th>
@@ -48,5 +46,4 @@ Products
     </table>
 </div>
 </div>
-@endsection
 @endsection

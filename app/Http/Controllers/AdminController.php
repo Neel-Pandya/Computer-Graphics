@@ -10,25 +10,19 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
-    public $admin_data;
 
-    public function setData()
-    {
-        $this->admin_data = DB::table('admin')->get();
-        return $this->admin_data;
-    }
 
     //
     public function create()
     {
-        $admin_data = $this->setdata();
-        return view('index', compact('admin_data'));
+
+        return view('index');
     }
 
     public function products(Request $request)
     {
-        $admin_data = $this->setdata();
-        return view('pages.products', compact('admin_data'));
+
+        return view('pages.products');
     }
     public function getRequiredData()
     {
@@ -107,7 +101,7 @@ class AdminController extends Controller
 
     public function products_add()
     {
-        $admin_data = $this->setdata();
+
         $product_sizes = DB::table('sizes')
             ->select('size_name')
             ->where('status', 'Active')
@@ -117,7 +111,7 @@ class AdminController extends Controller
             ->where('status', 'Active')
             ->get();
 
-        return view('pages.product_add', compact('admin_data', 'product_sizes', 'product_category'));
+        return view('pages.product_add', compact('product_sizes', 'product_category'));
     }
 
     public function product_store(Request $request)
@@ -171,9 +165,9 @@ class AdminController extends Controller
 
     public function products_purchase()
     {
-        $admin_data = $this->setdata();
 
-        return view('pages.purchased_products', compact('admin_data'));
+
+        return view('pages.purchased_products');
     }
 
     public function products_deactivate(string $product_id)
@@ -250,16 +244,16 @@ class AdminController extends Controller
 
     public function category_create()
     {
-        $admin_data = $this->setdata();
+
         $category_data = DB::table('categories')->paginate(3);
-        return view('pages.category_available', compact('admin_data', 'category_data'));
+        return view('pages.category_available', compact('category_data'));
     }
 
     public function category_add()
     {
-        $admin_data = $this->setdata();
 
-        return view('pages.category_add', compact('admin_data'));
+
+        return view('pages.category_add');
     }
 
     public function category_store(Request $request)
@@ -385,16 +379,16 @@ class AdminController extends Controller
 
     public function customer_create()
     {
-        $admin_data = $this->setdata();
 
-        return view('pages.customer_details', compact('admin_data'));
+
+        return view('pages.customer_details');
     }
 
     public function customer_add()
     {
-        $admin_data = $this->setdata();
 
-        return view('pages.customer_add', compact('admin_data'));
+
+        return view('pages.customer_add');
     }
 
     // Insert the customer if there is any profile picture or not
@@ -504,9 +498,9 @@ class AdminController extends Controller
     }
     public function admin_edit()
     {
-        $admin_data = $this->setdata();
 
-        return view('pages.admin_edit', compact('admin_data'));
+
+        return view('pages.admin_edit');
     }
 
     public function admin_update(Request $request): \Illuminate\Http\RedirectResponse
@@ -542,9 +536,9 @@ class AdminController extends Controller
 
     public function change_password()
     {
-        $admin_data = $this->setdata();
 
-        return view('pages.change_password', compact('admin_data'));
+
+        return view('pages.change_password');
     }
 
     public function update_password(Request $request)
@@ -567,53 +561,9 @@ class AdminController extends Controller
         }
     }
 
-    public function shoes()
-    {
-        $admin_data = $this->setdata();
-
-        return view('pages.shoes', compact('admin_data'));
-    }
-
-    public function jeans()
-    {
-        $admin_data = $this->setdata();
-
-        return view('pages.jeans', compact('admin_data'));
-    }
-
-    public function hoodie()
-    {
-        $admin_data = $this->setdata();
-
-        return view('pages.hoodie', compact('admin_data'));
-    }
-
-    public function shirt()
-    {
-        $admin_data = $this->setdata();
-
-        return view('pages.shirt', compact('admin_data'));
-    }
-
-    public function products_female()
-    {
-        $admin_data = $this->setdata();
-
-        return view('pages.product_female', compact('admin_data'));
-    }
-
-    public function products_male()
-    {
-        $admin_data = $this->setdata();
-
-        return view('pages.products_male', compact('admin_data'));
-    }
-
     public function rate()
     {
-        $admin_data = $this->setdata();
-
-        return view('pages.rating', compact('admin_data'));
+        return view('pages.rating');
     }
 
     public function login(Request $request)
@@ -641,23 +591,23 @@ class AdminController extends Controller
 
     public function coupen_available()
     {
-        $admin_data = $this->setdata();
 
-        return view('pages.coupen', compact('admin_data'));
+
+        return view('pages.coupen', compact(''));
     }
 
     public function coupen_add()
     {
-        $admin_data = $this->setdata();
 
-        return view('pages.coupen_add', compact('admin_data'));
+
+        return view('pages.coupen_add');
     }
 
     public function coupen_used()
     {
-        $admin_data = $this->setdata();
 
-        return view('pages.coupen_store', compact('admin_data'));
+
+        return view('pages.coupen_store');
     }
 
     public function coupen_store(Request $request)
@@ -691,9 +641,9 @@ class AdminController extends Controller
     }
     public function coupen_edit()
     {
-        $admin_data = $this->setdata();
 
-        return view('pages.coupen_edit', compact('admin_data'));
+
+        return view('pages.coupen_edit');
     }
     public function deactivate_coupen($Id)
     {
@@ -762,32 +712,11 @@ class AdminController extends Controller
 
     public function coupen_use()
     {
-        $admin_data = $this->setdata();
 
-        return view('pages.coupen_used', compact('admin_data'));
+
+        return view('pages.coupen_used');
     }
 
-    public function user_login()
-    {
-        $admin_data = $this->setdata();
-
-        return view('users.user_login', compact('admin_data'));
-    }
-
-    public function user_store(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-    }
-
-    public function user_register()
-    {
-        $admin_data = $this->setdata();
-
-        return view('users.user_register', compact('admin_data'));
-    }
 
     public function user_register_validate(Request $request)
     {
@@ -811,20 +740,15 @@ class AdminController extends Controller
 
     public function sizes_available()
     {
-        $admin_data = $this->setdata();
+
 
         $sizeData = DB::table('sizes')
             ->orderBy('size_name')
             ->paginate(3);
 
-        return view('pages.sizes', compact('admin_data', 'sizeData'));
+        return view('pages.sizes');
     }
 
-    public function sizes_add()
-    {
-        $admin_data = $this->setData();
-        return view('pages.addSizes', compact('admin_data'));
-    }
 
     public function sizes_store(Request $request)
     {
