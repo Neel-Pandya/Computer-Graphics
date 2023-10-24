@@ -16,12 +16,14 @@
     <link rel="stylesheet" href="{{ URL::to('/') }}/css/nav.css">
     <link rel="stylesheet" href="{{ URL::to('/') }}/css/products.css">
     <link rel="stylesheet" href="{{ URL::to('/') }}/css/categories.css">
+    {{--
+    <link rel="stylesheet" href="{{ asset('css/main.css') }}"> --}}
 
 
 </head>
 
 <body>
-    {{--  User navbar --}}
+    {{-- User navbar --}}
 
     @include('guest.user_nav')
     {{-- User navbar end --}}
@@ -36,8 +38,8 @@
     <script type="text/javascript" src="{{ URL::to('/') }}/js/nav.js"></script>
     <script type="text/javascript" src="{{ asset('js/products.js') }}""></script>
 
-    <script src="{{ asset('js/jquery.js') }}"></script>
-   
+    <script src=" {{ asset('js/jquery.js') }}"></script>
+
     @stack('scripts')
 
 </body>

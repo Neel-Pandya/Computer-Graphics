@@ -498,9 +498,8 @@ class AdminController extends Controller
     }
     public function admin_edit()
     {
-
-
-        return view('pages.admin_edit');
+        $admin_data = DB::table('admin')->get();
+        return view('pages.admin_edit', compact('admin_data'));
     }
 
     public function admin_update(Request $request): \Illuminate\Http\RedirectResponse
