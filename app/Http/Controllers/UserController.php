@@ -28,17 +28,8 @@ class UserController extends Controller
     }
     public function guest_products()
     {
-        $productForMale = DB::table('products')
-            ->where('Product_status', 'Active')
-            ->where('Product_for', 'Male')
-            ->get();
 
-        $productForFemale = DB::table('products')
-            ->where('Product_status', 'Active')
-            ->where('Product_for', 'Female')
-            ->get();
-
-        return view('guest.products', compact('productForMale', 'productForFemale'));
+        return view('guest.products');
     }
     public function guest_categories()
     {
@@ -61,13 +52,12 @@ class UserController extends Controller
     }
     public function guest_register_validate(Request $request)
     {
-        $token = $this->generateRandomToken();
-        $request->session()->put('token', $token);
+
 
         $mailData = [
             'title' => 'Registration Successful',
             'body' => 'Hello ' . $request->customer_name . ' your account is created successfully. Please click below link to activate your account.',
-            'token' => $token,
+
             // Include the token in the email data
             'email' => $request->customer_email,
         ];
@@ -182,14 +172,14 @@ class UserController extends Controller
         return redirect()->route('guest.login');
     }
 
-    public function activate_account($email, $token, Request $request)
+    public function activate_account($email, Request $request)
     {
-        $sessionToken = $request->session()->get('token');
+
         $ifUserExists = DB::table('customer_registration')
             ->where('customer_email', $email)
             ->where('customer_status', 'Inactive')
             ->first();
-        if ($token === $sessionToken) {
+        if ($ifUserExists) {
             $updateStatus = DB::table('customer_registration')
                 ->where('customer_email', $email)
                 ->update(['customer_status' => 'Active']);

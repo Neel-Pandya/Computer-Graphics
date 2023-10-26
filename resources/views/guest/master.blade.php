@@ -40,7 +40,7 @@
 
     <script src=" {{ asset('js/jquery.js') }}"></script>
 
-    @stack('scripts')
+    @yield('scripts')
 
 </body>
 

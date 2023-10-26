@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BeforeLoginController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 
 Route::prefix('admin')->group(function () {
@@ -121,6 +123,8 @@ Route::prefix('admin')->group(function () {
 Route::prefix('guest_user')->group(function () {
     Route::get('index', [UserController::class, 'guest_create'])->name('guest.create');
     Route::get('products', [UserController::class, 'guest_products'])->name('guest.products');
+    Route::get('products-for-male', [ProductController::class, 'getProductsForMale'])->name('products.male');
+    Route::get('products-for-female', [ProductController::class, 'getProductsForFemale'])->name('products.female');
     Route::get('categories', [UserController::class, 'guest_categories'])->name('guest.category');
     Route::get('contact', [UserController::class, 'guest_contact'])->name('guest.contact');
     Route::get('login', [UserController::class, 'guest_login'])->name('guest.login')->middleware('User.Success');
@@ -128,7 +132,7 @@ Route::prefix('guest_user')->group(function () {
     Route::post('confirm_register', [UserController::class, 'guest_register_validate'])->name('guest.confirm.register');
     Route::post('send_contact', [UserController::class, 'guest_contact_validate'])->name('guest.confirm.contact');
     Route::post('login_validate', [UserController::class, 'login_validate'])->name('guest.login.validate');
-    Route::get('activate/{email}/{token}', [UserController::class, 'activate_account'])->name('guest.account.activate');
+    Route::get('activate/{email}', [UserController::class, 'activate_account'])->name('guest.account.activate');
     Route::view('forget_password_form', 'guest.forget_password_form')->name('forget.password');
     Route::post('forget_password_form_submit', [BeforeLoginController::class, 'forget_password_form_submit'])->name('forget.password.form.submit');
     Route::get('verify_forget_pwd_otp/{email}/{token}', [BeforeLoginController::class, 'verify_forget_pwd_otp'])->name('verify.forget.password.otp');
@@ -138,7 +142,7 @@ Route::prefix('guest_user')->group(function () {
     Route::post('reset_pwd_action', [BeforeLoginController::class, 'reset_pwd_action'])->name('reset.password.action');
 
     Route::middleware('User.Auth')->group(function () {
-
+        Route::post('add-to-cart', [CartController::class, 'insertIntoCart']);
         Route::get('edit_profile', [UserController::class, 'edit_profile'])->name('user.edit.profile');
         Route::get('logout', [UserController::class, 'guest_logout'])->name('guest.logout');
         Route::post('edit_profile_validate', [UserController::class, 'edit_profile_validate'])->name('edit.profile.validate');
