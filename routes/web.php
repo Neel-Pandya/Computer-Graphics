@@ -8,6 +8,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PurchaseController;
 
 Route::prefix('admin')->group(function () {
     Route::view('login', 'pages.admin_login')
@@ -141,12 +142,18 @@ Route::prefix('guest_user')->group(function () {
     Route::view('reset_pwd', 'guest.reset_pwd')->name('reset.pwd');
     Route::post('reset_pwd_action', [BeforeLoginController::class, 'reset_pwd_action'])->name('reset.password.action');
 
+    Route::post('purchase-products', [PurchaseController::class, 'create']);
     Route::middleware('User.Auth')->group(function () {
+        Route::get('delete/{id}', [CartController::class, 'delete'])->name('cart.delete');
         Route::post('add-to-cart', [CartController::class, 'insertIntoCart']);
+        Route::post('apply-coupen-code', [CartController::class, 'applyCoupenCode']);
+        Route::get('get-cart-details', [CartController::class, 'getCartDetails']);
+        Route::post('update-cart-quantity', [CartController::class, 'updateCartQuantity']);
         Route::get('edit_profile', [UserController::class, 'edit_profile'])->name('user.edit.profile');
         Route::get('logout', [UserController::class, 'guest_logout'])->name('guest.logout');
         Route::post('edit_profile_validate', [UserController::class, 'edit_profile_validate'])->name('edit.profile.validate');
         Route::view('change_password', 'guest.change_password')->name('user.change.password');
+        Route::view('cart', 'guest.cart')->name('user.cart');
         Route::post('change_password_validate', [UserController::class, 'change_password_validate'])->name('change.password.validate');
     });
 });

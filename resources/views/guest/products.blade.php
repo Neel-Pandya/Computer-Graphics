@@ -43,7 +43,7 @@ Products
 
 @section('scripts')
 <script src="{{ asset('js/jquery.js') }}"></script>
-<script src="{{ asset('js/custom.js') }}"></script>
+<script src="{{ asset('js/custom.js')}}"></script>
 <script src="{{ asset('js/sweetAlert.js') }}"></script>
 
 <script>
@@ -56,7 +56,6 @@ Products
                 success: function (response) {
                     $.each(response.products, function (indexInArray, valueOfElement) {
                         const { Product_category, Product_for, Product_id, Product_image, Product_name, Product_price, Product_size } = valueOfElement
-
                         $(".male").append(`
                         <div class="card" style="width: 18rem;">
                             <img src="{{ URL::to('/') }}/images/products/${Product_image}" class="card-img-top img-sm" alt="..." >
@@ -137,11 +136,16 @@ Products
         }
         loadProductsForFemale()
         loadProductsForMale()
+        let userEmail = `{{ session()->get('user_email') }}`
+
 
         $(document).on('click', '.add-to-cart', function (e) {
             let itemId = $(this).data('id')
 
+
             const productData = {
+                id: itemId,
+                email: userEmail,
                 Product_category: $(this).data('category'),
                 Product_for: $(this).data('for'),
                 Product_id: $(this).data('id'),
@@ -152,17 +156,6 @@ Products
                 Quantity: $(this).data('quantity')
             };
 
-            const formData = new FormData(this);
-            formData.append('id', itemId)
-            formData.append('email', "{{ session()->get('user_email') }}")
-            formData.append("Product_id", productData.Product_id);
-            formData.append('Product_name', productData.Product_name)
-            formData.append('Product_price', productData.Product_price)
-            formData.append('Product_category', productData.Product_category)
-            formData.append('Product_for', productData.Product_for)
-            formData.append('Product_size', productData.Product_size)
-            formData.append('Product_image', productData.Product_image)
-            formData.append('Quantity', productData.Quantity)
 
 
             // console.log(productData)
@@ -178,11 +171,18 @@ Products
             $.ajax({
                 type: "POST",
                 url: "{{ URL::to('/') }}/guest_user/add-to-cart",
-                data: formData,
-                contentType: false,
-                processData: false,
+                data: productData,
                 success: function (response) {
-                    console.log(response)
+
+                    if(response.status == 'success'){
+                        sweetAlert('success', response.message)
+                    }
+                    else if(response.status == 'updated'){
+                        sweetAlert('success', response.message) 
+                    }
+                    else if(response.status == 'failed'){
+                        sweetAlert('error', response.message)
+                    }
                 },
                 error: function (error) {
                     console.log(error)

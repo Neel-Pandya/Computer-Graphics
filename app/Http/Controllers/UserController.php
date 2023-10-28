@@ -235,6 +235,7 @@ class UserController extends Controller
     {
         session()->forget('user_email');
         session()->forget('user_password');
+        session()->forget('applied_coupen');
         return redirect()->route('guest.login');
     }
 

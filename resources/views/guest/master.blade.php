@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('titles')</title>
     <link href="https://fonts.googleapis.com/css?family=Lora:400,700|Montserrat:300" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Chivo:300,700|Playfair+Display:700i" rel="stylesheet">
@@ -18,6 +19,8 @@
     <link rel="stylesheet" href="{{ URL::to('/') }}/css/categories.css">
     {{--
     <link rel="stylesheet" href="{{ asset('css/main.css') }}"> --}}
+
+    @yield('styles')
 
 
 </head>
