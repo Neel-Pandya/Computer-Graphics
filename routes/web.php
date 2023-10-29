@@ -40,6 +40,8 @@ Route::prefix('admin')->group(function () {
             Route::get('delete/{product_id}', [AdminController::class, 'products_delete'])->name('products.delete');
             Route::get('get-required-data', [AdminController::class, 'getRequiredData'])->name('products.get');
             Route::get('reactivate/{product_id}', [AdminController::class, 'product_reactivate'])->name('products.reactivate');
+
+            Route::get('get-all-products', [ProductController::class, 'getAllProducts']);
         });
 
         Route::prefix('category')->group(function () {

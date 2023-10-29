@@ -81,7 +81,7 @@ class CartController extends Controller
 
     public function applyCoupenCode(Request $request)
     {
-        $grandTotal = $request->total;
+        $grandTotal = $request->grandTotal;
         $coupen = $request->coupen;
 
         $checkIfExists = DB::table('coupens')->where('coupen_name', $coupen)->where('status', 'Active')->first();

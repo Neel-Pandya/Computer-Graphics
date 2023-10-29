@@ -6,40 +6,84 @@ Purchased Products
 
 <div class="table-responsive">
     <table class="table  table-striped  table-bordered">
-       
-        <thead class="table-dark text-center ">
-            <th>Customer id</th>
-            <th>Customer name</th>
-            <th>Customer Email</th>
-            
-            <th>Product name</th>
-            <th>Product price</th>
-            <th>Product category</th>
-            <th>Gender</th>
-            <th>Purchased status</th>
-            <th>Product photo</th>
 
+        <thead class="table-dark text-center ">
+            <th>id</th>
+            <th>Email</th>
+            <th>address</th>
+            <th>Product id</th>
+            <th>Product_name</th>
+            <th>Product_price</th>
+            <th>Product_size</th>
+            <th>Product_for</th>
+            <th>Product_category</th>
+            <th>Product_image</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>OverAll Total</th>
+            <th>used Coupen</th>
 
 
         </thead>
         <tbody class="text-center">
-            <tr>
-                <td>2</td>
-                <td>Neel pandya</td>
-                <td>neel@gmail.com</td>
-            
 
-                <td>Special Hoodie</td>
-                <td>200 Rs</td>
-                <td>Hoodie</td>
-                <td>Male</td>
-                <td>Returned</td>
-                <td><img src="{{ URL::to('/') }}/images/products/pexels-gabriel-freytez-341523.jpg" alt="" srcset="">
-                </td>
-             
-            </tr>
         </tbody>
     </table>
 </div>
 </div>
+@endsection
+
+@section('scripts')
+
+<script src="{{ asset('js/jquery.js') }}"></script>
+<script src="{{ asset('js/sweetAlert.js') }}"></script>
+<script src="{{ asset('js/custom.js') }}"></script>
+
+<script>
+    $(function () {
+        const loadAllPurchasedProducts = () => {
+            $.ajax({
+                type: "GET",
+                url: "get-all-products",
+                success: function (response) {
+                    console.log(response)
+
+                    if (response.status == 'success') {
+                        $("tbody").html('')
+                        $.each(response.data, function (indexInArray, valueOfElement) {
+                            const { id, email, address, Product_id, Product_name, Product_for, Product_size, Product_category, Product_price, Quantity, coupen, FullTotal, image, total } = valueOfElement
+
+                            $("tbody").append(
+                                `
+                                    <tr>
+                                        <td>${id}</td>
+                                        <td>${email}</td>
+                                        <td>${address}</td>
+                                        <td>${Product_id}</td>
+                                        <td>${Product_name}</td>
+                                        <td>${Product_price}</td>
+                                        <td>${Product_size}</td>
+                                        <td>${Product_for}</td>
+                                        <td>${Product_category}</td>
+                                        <td><img src="{{ URL::to('/') }}/images/products/${image}" style="width:50px;"</td>
+                                        <td>${Quantity}</td>
+                                        <td>${total}</td>
+                                        <td>${FullTotal}</td>
+                                        <td>${coupen}</td>
+                                    </tr>
+                                `
+
+                            )
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        loadAllPurchasedProducts()
+    });
+</script>
 @endsection

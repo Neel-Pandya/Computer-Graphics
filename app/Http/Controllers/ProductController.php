@@ -8,20 +8,13 @@ use Illuminate\Support\Facades\DB;
 class ProductController extends Controller
 {
     //
-
-    public function getProductsForMale()
+    public function getAllProducts()
     {
-        $products = DB::table('products')->where('Product_for', 'Male')->where('Product_status', 'Active')->get();
-        if ($products->count() > 0) {
-            return response()->json(['status' => 'success', 'products' => $products]);
-        }
-    }
-
-    public function getProductsForFemale()
-    {
-        $products = DB::table('products')->where('Product_for', 'Female')->where('Product_status', 'Active')->get();
-        if ($products->count() > 0) {
-            return response()->json(['status' => 'success', 'products' => $products]);
+        $userProducts = DB::table('purchase_items')->get();
+        if ($userProducts->count() > 0) {
+            return response()->json(['status' => 'success', 'data' => $userProducts]);
+        } else {
+            return response()->json(['status' => 'failed', 'message' => 'Oops no record found']);
         }
     }
 }

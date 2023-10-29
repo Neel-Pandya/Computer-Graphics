@@ -52,8 +52,7 @@ Cart
                     <label for="">Enter the coupen code</label>
                     <div class="" style="gap: 10px; margin-top:10px">
                         <input type="text" name="" id="coupen" class="form-control">
-                        <button class="btn btn-primary apply-coupen-button"
-                            style="float: right; margin-top:10px;">Apply</button>
+
                     </div>
 
 
@@ -226,21 +225,7 @@ Cart
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            $.ajax({
-                type: "POST",
-                url: "apply-coupen-code",
-                data: data,
-                success: function (response) {
-                    if (response.status == 'success') {
-                        $("#grandTotal").text(response.total)
-                    } else if (response.status == 'failed') {
-                        sweetAlert('error', response.message);
-                    }
-                },
-                error: function (response) {
-                    console.log(response)
-                }
-            });
+           
         });
 
 
@@ -261,9 +246,13 @@ Cart
                     address: $("#address").val()
                 },
                 success: function (response) {
+                    console.log(response)
                     if (response.status == 'success') {
                         sweetAlert('success', response.message)
                         loadAllCartDetails()
+                    }
+                    else if(response.status == 'failed'){
+                        sweetAlert('error', response.message)
                     }
 
                 },
