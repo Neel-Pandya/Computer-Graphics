@@ -127,4 +127,10 @@ class PurchaseController extends Controller
             }
         }
     }
+
+    public function getPurchasedProducts()
+    {
+        $user_purchased_products = DB::table('purchase_items')->where('email', session()->get('user_email'))->get();
+        return response()->json(['status' => 'success', 'products' => $user_purchased_products]);
+    }
 }

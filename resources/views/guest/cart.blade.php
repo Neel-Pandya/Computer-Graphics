@@ -11,65 +11,67 @@ Cart
 </style>
 @endsection
 @section('content')
-<div class="row">
-    <div class="col-lg-8 col-md-12 col-sm-12 my-5">
-        <div class="table-responsive">
-            <table class="table">
-                <thead class="text-center">
-                    <tr>
-                        <th scope="col">Pro_id</th>
-                        <th scope="col">Pro_name</th>
-                        <th scope="col">Pro_price</th>
-                        <th>Pro_size</th>
-                        <th>Pro_for</th>
-                        <th>Pro_category</th>
-                        <th>Image</th>
-                        <th>Qty</th>
-                        <th>Total </th>
-                        <th>Action</th>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-12 col-sm-12 my-5">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="text-center">
+                        <tr>
+                            <th scope="col">Pro_id</th>
+                            <th scope="col">Pro_name</th>
+                            <th scope="col">Pro_price</th>
+                            <th>Pro_size</th>
+                            <th>Pro_for</th>
+                            <th>Pro_category</th>
+                            <th>Image</th>
+                            <th>Qty</th>
+                            <th>Total </th>
+                            <th>Action</th>
 
-                    </tr>
-                </thead>
-                <tbody>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-    <div class="col-lg-4 col-sm-12 col-md-4 border bg-light text-dark rounded p-4" style="width: 400px">
-        <h3>Total: </h3>
-        <h5 id="grandTotal" style="float: right;"></h5>
+        <div class="col-lg-4 col-sm-12 col-md-4 border bg-light text-dark rounded p-4" style="width: 400px">
+            <h3>Total: </h3>
+            <h5 id="grandTotal" style="float: right;"></h5>
 
-        <form method="post" id="makePurchaseForm">
-            @csrf
-            <div class="row mt-4">
-                <div class="col-12 mt-4">
-                    <label for="" class="form-label">Email</label>
-                    <input type="email" value="{{ session('user_email') }}" class="form-control" readonly>
-                </div>
+            <form method="post" id="makePurchaseForm">
+                @csrf
+                <div class="row mt-4">
+                    <div class="col-12 mt-4">
+                        <label for="" class="form-label">Email</label>
+                        <input type="email" value="{{ session('user_email') }}" class="form-control" readonly>
+                    </div>
 
-                <div class="col-12 mt-4">
-                    <label for="">Enter the coupen code</label>
-                    <div class="" style="gap: 10px; margin-top:10px">
-                        <input type="text" name="" id="coupen" class="form-control">
+                    <div class="col-12 mt-4">
+                        <label for="">Enter the coupen code</label>
+                        <div class="" style="gap: 10px; margin-top:10px">
+                            <input type="text" name="" id="coupen" class="form-control">
+
+                        </div>
+
+
+                    </div>
+                    <div class="col-12 mt-4">
+                        <label for="">Enter the address</label>
+                        <input id="address" type="text" class="form-control mt-2"></input>
 
                     </div>
 
-
+                    <div class="col-12 mt-4">
+                        <input type="submit" value="Make Purchase" class="btn btn-primary col-12">
+                    </div>
                 </div>
-                <div class="col-12 mt-4">
-                    <label for="">Enter the address</label>
-                    <input id="address" type="text" class="form-control mt-2"></input>
-
-                </div>
-
-                <div class="col-12 mt-4">
-                    <input type="submit" value="Make Purchase" class="btn btn-primary col-12">
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
+
 </div>
 @endsection
 
@@ -109,11 +111,11 @@ Cart
                                         <td><img src="{{ URL::to('/') }}/images/products/${Product_image}" style="width:100px;"></td>
                                         <td>
                                      <div class="row d-flex text-center justify-content-center">
-                                    <div class="col-auto">
+                                    <div class="col-auto mb-2">
                                         <button class="btn btn-secondary decrement" data-product-id="${Product_id}">-</button>
                                     </div>
-                                    <div class="col-auto">
-                                        <input type="number" class="form-control quantity" min="1" max="10" step="1" value="${Quantity}" style="font-size: 11px; " readonly>
+                                    <div class="col-auto mb-2 text-center">
+                                        <input type="number" class="form-control quantity" min="1" max="10" step="1" value="${Quantity}" style="font-size: 11px" readonly>
                                     </div>
                                     <div class="col-auto">
                                         <button class="btn btn-secondary increment" data-product-id="${Product_id}">+</button>

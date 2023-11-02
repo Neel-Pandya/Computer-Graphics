@@ -10,6 +10,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
 
+Route::redirect('/', 'guest_user/index');
 Route::prefix('admin')->group(function () {
     Route::view('login', 'pages.admin_login')
         ->name('admin.login')
@@ -126,13 +127,15 @@ Route::prefix('admin')->group(function () {
 Route::prefix('guest_user')->group(function () {
     Route::get('index', [UserController::class, 'guest_create'])->name('guest.create');
     Route::get('products', [UserController::class, 'guest_products'])->name('guest.products');
-    Route::get('products-for-male', [ProductController::class, 'getProductsForMale'])->name('products.male');
+    Route::get('products-for-male/{search?}', [ProductController::class, 'getProductsForMale'])->name('products.male');
     Route::get('products-for-female', [ProductController::class, 'getProductsForFemale'])->name('products.female');
     Route::get('categories', [UserController::class, 'guest_categories'])->name('guest.category');
     Route::get('contact', [UserController::class, 'guest_contact'])->name('guest.contact');
     Route::get('login', [UserController::class, 'guest_login'])->name('guest.login')->middleware('User.Success');
     Route::get('register', [UserController::class, 'guest_register'])->name('guest.register');
     Route::post('confirm_register', [UserController::class, 'guest_register_validate'])->name('guest.confirm.register');
+    Route::get('filter-by-gender/{gender?}/{size?}', [ProductController::class, 'filterByGenders']);
+    Route::get('get-all-size', [ProductController::class, 'getAllSize']);
     Route::post('send_contact', [UserController::class, 'guest_contact_validate'])->name('guest.confirm.contact');
     Route::post('login_validate', [UserController::class, 'login_validate'])->name('guest.login.validate');
     Route::get('activate/{email}', [UserController::class, 'activate_account'])->name('guest.account.activate');
@@ -157,5 +160,7 @@ Route::prefix('guest_user')->group(function () {
         Route::view('change_password', 'guest.change_password')->name('user.change.password');
         Route::view('cart', 'guest.cart')->name('user.cart');
         Route::post('change_password_validate', [UserController::class, 'change_password_validate'])->name('change.password.validate');
+        Route::view('order-history', 'guest.order_history')->name('user.history');
+        Route::get('get-purchased-products', [PurchaseController::class, 'getPurchasedProducts']);
     });
 });

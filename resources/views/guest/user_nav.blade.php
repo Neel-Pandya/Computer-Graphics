@@ -69,6 +69,12 @@
                         <li class="nav-link" style="font-family: 'Montserrat', sans-serif;"><a
                                 href="{{ route('user.cart') }}"
                                 class="{{ request()->routeIs('user.cart') ? 'active' : '' }} text-decoration-none ms-3">Cart</a>
+
+                        <li class="nav-link" style="font-family: 'Montserrat', sans-serif;"><a
+                                href="{{ route('user.history') }}"
+                                class="{{ request()->routeIs('user.history') ? 'active' : '' }} text-decoration-none ms-3">Order
+                                History</a>
+
                         <li class="nav-link" style="font-family: 'Montserrat', sans-serif;"><a
                                 href="{{ route('guest.logout') }}"
                                 class="{{ request()->routeIs('guest.logout') ? 'active' : '' }} text-decoration-none ms-3">logout</a>
