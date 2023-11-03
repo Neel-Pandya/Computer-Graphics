@@ -97,33 +97,39 @@ class PurchaseController extends Controller
                 return response()->json(['status' => 'failed', 'message' => 'Error in purchasing the items']);
             }
         } else {
+            $cartTotal = 0;
+            $insert1 = null;
             foreach ($cart as $item) {
                 $total = $item->Product_price * $item->quantity;
-                $insert =  DB::table('purchase_items')->insert([
+                $cartTotal += $total;
+            }
+            foreach ($cart as $item1) {
+                $total = $item1->Product_price * $item1->quantity;
+                $insert1 =  DB::table('purchase_items')->insert([
                     'email' => session()->get('user_email'),
                     'address' => $request->address,
-                    'Product_id' => $item->Product_id,
-                    'Product_name' => $item->Product_name,
-                    'Product_price' => $item->Product_price,
-                    'Product_size' => $item->Product_size,
-                    'Product_for' => $item->Product_for,
-                    'Product_category' => $item->Product_category,
-                    'Quantity' => $item->quantity,
+                    'Product_id' => $item1->Product_id,
+                    'Product_name' => $item1->Product_name,
+                    'Product_price' => $item1->Product_price,
+                    'Product_size' => $item1->Product_size,
+                    'Product_for' => $item1->Product_for,
+                    'Product_category' => $item1->Product_category,
+                    'Quantity' => $item1->quantity,
                     'total' => $total,
-                    'FullTotal' => $request->grandTotal,
-                    'image' => $item->Product_image,
+                    'FullTotal' => $cartTotal,
+                    'image' => $item1->Product_image,
                     'status' => 'purchased',
-                    'coupen' => null,
+                    'coupen' => $request->coupen,
                     'purchased_date' => today(),
                     'created_at' => now(),
                     'updated_at' => now()
                 ]);
-                if ($insert) {
-                    DB::table('cart')->where('email', session()->get('user_email'))->delete();
-                    return response()->json(['status' => 'success', 'message' => 'Purchased successfully']);
-                } else {
-                    return response()->json(['status' => 'failed', 'message' => 'Error in purchasing the items']);
-                }
+                DB::table('cart')->where('email', session()->get('user_email'))->delete();
+            }
+            if ($insert1) {
+                return response()->json(['status' => 'success', 'message' => 'Order Success']);
+            } else {
+                return response()->json(['status' => 'failed', 'message' => 'error in inserting the order']);
             }
         }
     }

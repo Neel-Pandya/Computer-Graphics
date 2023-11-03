@@ -22,7 +22,7 @@ class ProductController extends Controller
     {
 
         if ($search != "") {
-            $products = DB::table('products')->where('Product_status', 'Active')->where('Product_name', 'like',  "$search%")->orWhere('Product_price', $search)->orWhere('Product_category', $search)->orWhere('Product_size', $search)->get();
+            $products = DB::table('products')->where('Product_status', 'Active')->where('Product_category',  "$search%")->orWhere('Product_name', 'like', $search)->orWhere('Product_price', $search)->orWhere('Product_category', $search)->orWhere('Product_size', $search)->get();
             return response()->json(['status' => 'success', 'products' => $products]);
         } else {
             $products = DB::table('products')->where('Product_status', 'Active')->get();

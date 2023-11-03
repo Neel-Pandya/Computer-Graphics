@@ -9,6 +9,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\RateController;
+use App\Http\Controllers\RefundController;
 
 Route::redirect('/', 'guest_user/index');
 Route::prefix('admin')->group(function () {
@@ -121,6 +123,24 @@ Route::prefix('admin')->group(function () {
             Route::get('edit/{id}', [HomeController::class, 'edit']);
             Route::post('update', [HomeController::class, 'update']);
         });
+
+        Route::prefix('refunds')->group(function () {
+            Route::get('create', function () {
+                return view('pages.refund');
+            })->name('refunds.create');
+
+            Route::controller(RefundController::class)->group(function () {
+                Route::get('get-refund-requests', 'getRefundRequests');
+                Route::get('approve/{id}', 'approveRefunds');
+                Route::get('decline/{id}', 'declineRefunds');
+            });
+        });
+
+        Route::prefix('rating')->group(function () {
+            Route::controller(RateController::class)->group(function () {
+                Route::get('get-rating-review', 'getRateReview');
+            });
+        });
     });
 });
 
@@ -136,6 +156,13 @@ Route::prefix('guest_user')->group(function () {
     Route::post('confirm_register', [UserController::class, 'guest_register_validate'])->name('guest.confirm.register');
     Route::get('filter-by-gender/{gender?}/{size?}', [ProductController::class, 'filterByGenders']);
     Route::get('get-all-size', [ProductController::class, 'getAllSize']);
+
+
+    Route::controller(RefundController::class)->group(function () {
+        Route::get('get-refund/{id}', 'getRefund');
+        Route::post('refund-product', 'createRefundProduct');
+    });
+
     Route::post('send_contact', [UserController::class, 'guest_contact_validate'])->name('guest.confirm.contact');
     Route::post('login_validate', [UserController::class, 'login_validate'])->name('guest.login.validate');
     Route::get('activate/{email}', [UserController::class, 'activate_account'])->name('guest.account.activate');
@@ -148,6 +175,10 @@ Route::prefix('guest_user')->group(function () {
     Route::post('reset_pwd_action', [BeforeLoginController::class, 'reset_pwd_action'])->name('reset.password.action');
 
     Route::post('purchase-products', [PurchaseController::class, 'create']);
+    Route::controller(RateController::class)->group(function () {
+        Route::post('submit-review', 'create');
+    });
+
     Route::middleware('User.Auth')->group(function () {
         Route::get('delete/{id}', [CartController::class, 'delete'])->name('cart.delete');
         Route::post('add-to-cart', [CartController::class, 'insertIntoCart']);

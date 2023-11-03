@@ -8,6 +8,15 @@ Cart
     body {
         overflow-x: hidden;
     }
+
+    .star {
+        cursor: pointer;
+    }
+
+    .star.filled {
+        color: gold;
+        /* Change the color of the filled stars */
+    }
 </style>
 @endsection
 @section('content')
@@ -37,7 +46,7 @@ Cart
                 </table>
             </div>
         </div>
-        <div class="col-lg-4 col-sm-12 col-md-4 border bg-light text-dark rounded p-4" style="width: 400px">
+        <div class="col-lg-4 col-sm-12 col-md-4 mt-4 border bg-light text-dark rounded p-4" style="width: 400px">
             <h3>Total: </h3>
             <h5 id="grandTotal" style="float: right;"></h5>
 
@@ -64,14 +73,51 @@ Cart
 
                     </div>
 
-                    <div class="col-12 mt-4">
-                        <input type="submit" value="Make Purchase" class="btn btn-primary col-12">
-                    </div>
+                    <center>
+                        <div class="col-12 mt-4">
+                            <input type="submit" value="Make Purchase" class="btn btn-primary">
+                        </div>
+                    </center>
                 </div>
             </form>
         </div>
     </div>
 
+
+    <div class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Rate and Review us</h5>
+
+
+                </div>
+                <div class="modal-body text-center">
+                    <span style="font-size: 2rem;" class="star" data-value="1" style="cursor:pointer;">&star;</span>
+                    <span style="font-size: 2rem;" class="star" data-value="2" style="cursor:pointer;">&star;</span>
+                    <span style="font-size: 2rem;" class="star" data-value="3" style="cursor:pointer;">&star;</span>
+                    <span style="font-size: 2rem;" class="star" data-value="4" style="cursor:pointer;">&star;</span>
+                    <span style="font-size: 2rem;" class="star" data-value="5" style="cursor:pointer;">&star;</span>
+
+                    <form method="post" id="myForm">
+                        @csrf
+                        <div class="row">
+                            <div class="col-12 mt-4">
+                                <label for="" class="mb-4">Enter your review</label>
+                                <input type="text" name="review" id="review" class="form-control" required>
+
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary button-close" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Submit Reveiw</button>
+                </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -227,7 +273,7 @@ Cart
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-           
+
         });
 
 
@@ -252,8 +298,12 @@ Cart
                     if (response.status == 'success') {
                         sweetAlert('success', response.message)
                         loadAllCartDetails()
+
+                        setTimeout(() => {
+                            rateUs()
+                        }, 3000);
                     }
-                    else if(response.status == 'failed'){
+                    else if (response.status == 'failed') {
                         sweetAlert('error', response.message)
                     }
 
@@ -266,6 +316,66 @@ Cart
         });
 
 
+
+        $(document).on('click', '.button-close', function () {
+            $(".modal").modal('hide')
+        })
+
+
+
+
+        function rateUs() {
+            $(".modal").modal('show')
+
+            let stars = document.querySelectorAll('.star');
+            let rating = 0; // Variable to store the user's rating
+
+            stars.forEach((star) => {
+                star.addEventListener('click', function () {
+                    rating = parseInt(this.getAttribute('data-value'));
+
+                    // Loop through the stars and update their appearance
+                    stars.forEach((s) => {
+                        if (parseInt(s.getAttribute('data-value')) <= rating) {
+                            s.classList.add('filled');
+
+                        } else {
+                            s.classList.remove('filled');
+
+                        }
+                    });
+                });
+            });
+
+            $(document).on('submit', '#myForm', function (e) {
+                e.preventDefault();
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    type: "POST",
+                    url: "{{ URL::to('/') }}/guest_user/submit-review",
+                    data: {
+                        rate: rating,
+                        review: $("#review").val()
+                    },
+                    success: function (response) {
+                        if (response.status == 'success') {
+                            sweetAlert('success', response.message)
+                            $(".modal").modal('hide')
+                        }
+                        else if (response.status == 'failed') {
+                            sweetAlert('error', response.message)
+                        }
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            });
+        }
 
 
 

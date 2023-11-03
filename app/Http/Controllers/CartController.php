@@ -37,6 +37,7 @@ class CartController extends Controller
             }
         } else {
             // If the item doesn't exist, insert a new record into the cart
+
             $insertRecordIntoTheCart = DB::table('cart')->insert([
                 'email' => $request->email,
                 'Product_id' => $request->Product_id,

@@ -95,9 +95,9 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link">
+            <a class="nav-link" href="{{ route('refunds.create') }}">
                 <i class="icon-grid menu-icon"></i>
-                <span class="menu-title">Trending</span>
+                <span class="menu-title">Refund Requests</span>
 
             </a>
         </li>
