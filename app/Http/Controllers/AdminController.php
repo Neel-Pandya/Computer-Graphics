@@ -15,8 +15,15 @@ class AdminController extends Controller
     //
     public function create()
     {
-
-        return view('index');
+        $orderCount = DB::table('purchase_items')->count();
+        $productCount = DB::table('products')->count();
+        $customerCount = DB::table('customer_registration')->count();
+        $activeUserCount = DB::table('customer_registration')->where('customer_status', 'Active')->count();
+        $refundCount = DB::table('purchase_items')->where('status', 'refunded')->count();
+        $categoriesCount = DB::table('categories')->where('status', 'Active')->count();
+        $registeredCount = DB::table('customer_registration')->count();
+        $cancelledRefundCount = DB::table('purchase_items')->where('status', 'declined')->count();
+        return view('index', compact('orderCount', 'productCount', 'customerCount', 'activeUserCount', 'refundCount', 'categoriesCount', 'registeredCount', 'cancelledRefundCount'));
     }
 
     public function products(Request $request)
